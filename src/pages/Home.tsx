@@ -3,13 +3,12 @@ import {
   Button,
   FormControl,
   FormLabel,
-  Input,
   Stack,
   Text
 } from '@chakra-ui/core'
 import { useObserver } from 'mobx-react-lite'
 import React from 'react'
-import { ExerciseSelect, Timer } from '../components'
+import { ExerciseSelect, Timer, TimeSelect } from '../components'
 import { useStore } from '../hooks/useStore'
 
 export const Home: React.FC = () => {
@@ -39,14 +38,9 @@ export const Home: React.FC = () => {
             <FormLabel htmlFor='seconds'>
               Exercise time: {store.newTimer.exerciseTime} seconds
             </FormLabel>
-            <Input
-              id='seconds'
-              max='120'
-              min='0'
-              type='range'
-              step='5'
+            <TimeSelect
               value={store.newTimer.exerciseTime}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
                 const parsedSeconds = parseInt(e.target.value)
 
                 store.changeExerciseTime(
@@ -59,14 +53,9 @@ export const Home: React.FC = () => {
             <FormLabel htmlFor='recovery-time'>
               Recovery time: {store.newTimer.recoveryTime} seconds
             </FormLabel>
-            <Input
-              id='recovery-time'
-              type='range'
-              max='120'
-              min='0'
-              step='5'
+            <TimeSelect
               value={store.newTimer.recoveryTime}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
                 const parsedSeconds = parseInt(e.target.value)
 
                 store.changeRecoveryTime(
@@ -92,15 +81,17 @@ export const Home: React.FC = () => {
             />
           ))}
         </Box>
-        <Box mt='2'>
-          <Button
-            type='button'
-            variantColor='teal'
-            onClick={() => store.startTimer()}
-          >
-            Start
-          </Button>
-        </Box>
+        {store.timers.length > 0 && (
+          <Box mt='2'>
+            <Button
+              type='button'
+              variantColor='teal'
+              onClick={() => store.startTimer()}
+            >
+              Start
+            </Button>
+          </Box>
+        )}
       </Box>
     </Stack>
   ))

@@ -13,8 +13,13 @@ const exercises = [
 
 export const ExerciseSelect: React.FC<React.SelectHTMLAttributes<
   HTMLSelectElement
->> = ({ onChange }) => (
-  <Select placeholder='Select exercise' isRequired onChange={onChange}>
+>> = ({ onChange, value }) => (
+  <Select
+    placeholder='Select exercise'
+    isRequired
+    onChange={onChange}
+    value={value}
+  >
     {exercises.map((exercise) => (
       <option key={exercise}>{exercise}</option>
     ))}
