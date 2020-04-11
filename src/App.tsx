@@ -1,26 +1,30 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { CSSReset, ThemeProvider } from '@chakra-ui/core'
+import React from 'react'
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
+import { Header } from './components/Header'
+import { StoreProvider } from './hooks/useStore'
+import { About, Home } from './pages'
+import { customTheme } from './theme'
 
-function App() {
+const App: React.FC = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <StoreProvider>
+      <Router>
+        <ThemeProvider theme={customTheme}>
+          <CSSReset />
+          <Header />
+          <Switch>
+            <Route path='/about'>
+              <About />
+            </Route>
+            <Route path='/'>
+              <Home />
+            </Route>
+          </Switch>
+        </ThemeProvider>
+      </Router>
+    </StoreProvider>
+  )
 }
 
-export default App;
+export default App
