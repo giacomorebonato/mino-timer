@@ -14,6 +14,7 @@ Timer for fitness activity.
 ## To do
 
 * Text to speech for the exercise name
+* Fix IOS bug `Start time must be strictly greater than previous start time`
 * What else?
 
 ## Technicality
