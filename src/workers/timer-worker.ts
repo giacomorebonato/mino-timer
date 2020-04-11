@@ -1,13 +1,18 @@
 import { expose } from 'comlink'
+import debug from 'debug'
 
+const log = debug('time-worker')
 type TimerCallback = (secondsLeft: number) => void
 
-export const runTimer = (seconds: number, callback: TimerCallback) => {
-  const interval = setInterval(() => {
-    seconds--
-    callback(seconds)
+export const runTimer = async (seconds: number, callback: TimerCallback) => {
+  log('runTimer start')
 
-    if (!seconds) clearInterval(interval)
+  const interval = setInterval(async () => {
+    seconds--
+
+    if (seconds === 0) clearInterval(interval)
+
+    await callback(seconds)
   }, 1000)
 }
 
