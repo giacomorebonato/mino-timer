@@ -2,18 +2,19 @@ import { Select } from '@chakra-ui/core'
 import React from 'react'
 
 const exercises = [
-  'Crunch',
+  'Crunches',
   'Jumping Jacks',
   'Burpies',
-  'Reverse Crunch',
+  'Push ups',
+  'Reverse Crunches',
   'Russian twists',
   'Squats'
 ]
 
 export const ExerciseSelect: React.FC<React.SelectHTMLAttributes<
   HTMLSelectElement
->> = () => (
-  <Select placeholder='Select exercise' isRequired>
+>> = ({ onChange }) => (
+  <Select placeholder='Select exercise' isRequired onChange={onChange}>
     {exercises.map((exercise) => (
       <option key={exercise}>{exercise}</option>
     ))}

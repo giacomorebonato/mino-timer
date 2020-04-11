@@ -1,18 +1,18 @@
 import { Box, Flex, Text } from '@chakra-ui/core'
 import React from 'react'
 
-interface TimerProps {
-  name: string
-  seconds: number
-  secondsLeft: number
-  start: boolean
-}
+type TimerProps = Omit<TimerData, 'id'>
 
-export const Timer: React.FC<TimerProps> = ({ name, secondsLeft, start }) => {
+export const Timer: React.FC<TimerProps> = ({
+  name,
+  recoverySecondsLeft,
+  secondsLeft,
+  start
+}) => {
   return (
     <Box
       rounded='sm'
-      borderWidth='2px'
+      borderWidth='1px'
       mt='1'
       p='2'
       borderColor={start ? 'green.400' : 'gray.400'}
@@ -23,6 +23,14 @@ export const Timer: React.FC<TimerProps> = ({ name, secondsLeft, start }) => {
         </Box>
         <Box flex='1'>
           <Text textAlign='right'>{secondsLeft}</Text>
+        </Box>
+      </Flex>
+      <Flex flexDirection='row'>
+        <Box flex='1'>
+          <Text fontWeight='bold'>Rest</Text>
+        </Box>
+        <Box flex='1'>
+          <Text textAlign='right'>{recoverySecondsLeft}</Text>
         </Box>
       </Flex>
     </Box>

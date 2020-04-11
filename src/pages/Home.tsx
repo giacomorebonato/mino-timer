@@ -82,7 +82,9 @@ export const Home: React.FC = () => {
         <Box mt='2'>
           {store.timers.map((timer) => (
             <Timer
-              seconds={timer.exerciseTime}
+              recoveryTime={timer.recoveryTime}
+              exerciseTime={timer.exerciseTime}
+              recoverySecondsLeft={timer.recoverySecondsLeft}
               secondsLeft={timer.secondsLeft}
               key={`${timer.id}-timer`}
               start={timer.start}
@@ -94,7 +96,7 @@ export const Home: React.FC = () => {
           <Button
             type='button'
             variantColor='teal'
-            onClick={() => store.startTimers()}
+            onClick={() => store.startTimer()}
           >
             Start
           </Button>
