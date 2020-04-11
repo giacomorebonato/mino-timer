@@ -48,9 +48,6 @@ export const Header: React.FC = (props) => {
         flexGrow={1}
       >
         <MenuItems>
-          <NavLink to='/'>Home</NavLink>
-        </MenuItems>
-        <MenuItems>
           <NavLink to='/about'>About</NavLink>
         </MenuItems>
       </Box>
