@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  Flex,
   FormControl,
   FormLabel,
   Stack,
@@ -35,10 +36,11 @@ export const Home: React.FC = () => {
             />
           </FormControl>
           <FormControl mb='2'>
-            <FormLabel htmlFor='seconds'>
+            <FormLabel htmlFor='exercise-time'>
               Exercise time: {store.newTimer.exerciseTime} seconds
             </FormLabel>
             <TimeSelect
+              id='exercise-time'
               value={store.newTimer.exerciseTime}
               onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
                 const parsedSeconds = parseInt(e.target.value)
@@ -54,6 +56,7 @@ export const Home: React.FC = () => {
               Recovery time: {store.newTimer.recoveryTime} seconds
             </FormLabel>
             <TimeSelect
+              id='recovery-time'
               value={store.newTimer.recoveryTime}
               onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
                 const parsedSeconds = parseInt(e.target.value)
@@ -83,13 +86,34 @@ export const Home: React.FC = () => {
         </Box>
         {store.timers.length > 0 && (
           <Box mt='2'>
-            <Button
-              type='button'
-              variantColor='teal'
-              onClick={() => store.startTimer()}
-            >
-              Start
-            </Button>
+            <Flex>
+              <Button
+                flex='1'
+                type='button'
+                variantColor='teal'
+                onClick={() => store.startTimer()}
+              >
+                Start
+              </Button>
+              <Button
+                flex='1'
+                type='button'
+                ml='1'
+                mr='1'
+                onClick={() => {
+                  store.stopTimers()
+                }}
+              >
+                Stop
+              </Button>
+              <Button
+                flex='1'
+                type='button'
+                onClick={() => store.clearTimers()}
+              >
+                Clear
+              </Button>
+            </Flex>
           </Box>
         )}
       </Box>

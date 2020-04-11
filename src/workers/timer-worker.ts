@@ -4,22 +4,24 @@ import debug from 'debug'
 const log = debug('time-worker')
 type TimerCallback = (secondsLeft: number) => void
 
-export const runTimer = async (seconds: number, callback: TimerCallback) => {
-  log('runTimer start')
+export class TimerWorker {
+  intervalId = (null as unknown) as NodeJS.Timeout
+  clearInterval() {
+    clearInterval(this.intervalId)
+  }
+  async runTimer(seconds: number, callback: TimerCallback) {
+    log('runTimer start')
 
-  const interval = setInterval(async () => {
-    seconds--
+    this.intervalId = setInterval(async () => {
+      seconds--
 
-    if (seconds === 0) clearInterval(interval)
+      if (seconds === 0) clearInterval(this.intervalId)
 
-    await callback(seconds)
-  }, 1000)
+      await callback(seconds)
+    }, 1000)
+  }
 }
 
-const exports = {
-  runTimer
-}
+export type TimerWorkerType = typeof TimerWorker
 
-export type TimerWorker = typeof exports
-
-expose(exports)
+expose(TimerWorker)

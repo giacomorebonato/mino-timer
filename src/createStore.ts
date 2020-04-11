@@ -1,13 +1,14 @@
-import { proxy, wrap } from 'comlink'
+import { proxy, Remote, wrap } from 'comlink'
 import debug from 'debug'
 import * as Tone from 'tone'
+import { TimerWorker, TimerWorkerType } from './workers/timer-worker'
 
 const log = debug('createStore')
 const worker = new Worker('./workers/timer-worker', {
   name: 'timer-worker',
   type: 'module'
 })
-const workerApi = wrap<import('./workers/timer-worker').TimerWorker>(worker)
+const StoreTimerWorker = wrap<TimerWorkerType>(worker)
 
 const synth = new Tone.Synth().toMaster()
 const DEFAULT_EXERCISE_TIME = 30
@@ -27,6 +28,12 @@ export const createStore = () => ({
   timers: [] as TimerData[],
   changeName(name: string) {
     this.newTimer.name = name
+  },
+  clearTimers() {
+    this.timers = []
+  },
+  stopTimers() {
+    this.timeWorker.clearInterval()
   },
   changeExerciseTime(seconds: number) {
     this.newTimer.secondsLeft = seconds
@@ -86,9 +93,12 @@ export const createStore = () => ({
       }
     })
   },
+  timeWorker: (null as unknown) as Remote<TimerWorker>,
   async startTimer(currentTimer?: TimerData, isRecovery = false) {
     Tone.start()
     if (!this.timers.length) return
+
+    this.timeWorker = await new StoreTimerWorker()
 
     const timer = currentTimer || this.timers[0]
 
@@ -98,9 +108,9 @@ export const createStore = () => ({
 
     timer.start = true
 
-    await workerApi.runTimer(
+    await this.timeWorker.runTimer(
       timer.exerciseTime,
-      proxy((secondsLeft) => updateSeconds(secondsLeft))
+      proxy((secondsLeft: number) => updateSeconds(secondsLeft))
     )
   }
 })

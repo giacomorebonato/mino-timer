@@ -15,9 +15,12 @@ export const TimeSelect: React.FC<React.SelectHTMLAttributes<
     isRequired
     onChange={onChange}
     value={value}
+    id={id}
   >
-    {seconds.map((exercise) => (
-      <option key={`${id}-${exercise}`}>{exercise}</option>
+    {seconds.map((second) => (
+      <option key={`${id}-${second}`} value={second}>
+        {second} seconds
+      </option>
     ))}
   </Select>
 )
