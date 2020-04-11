@@ -1,6 +1,8 @@
 import { proxy, wrap } from 'comlink'
+import debug from 'debug'
 import * as Tone from 'tone'
 
+const log = debug('createStore')
 const worker = new Worker('./workers/timer-worker', {
   name: 'timer-worker',
   type: 'module'
@@ -51,43 +53,54 @@ export const createStore = () => ({
       start: false
     }
   },
-  startTimer(currentTimer?: TimerData, isRecovery = false) {
+  updateSeconds(timer: TimerData, isRecovery: boolean) {
+    return proxy((secondsLeft: number) => {
+      log(`Seconds left ${secondsLeft}`)
+
+      timer[isRecovery ? 'recoverySecondsLeft' : 'secondsLeft'] = secondsLeft
+
+      if (secondsLeft === 0) {
+        synth.triggerAttackRelease('G4', '0.6')
+
+        if (this.runningTimer === this.timers.length - 1 && isRecovery) {
+          this.resetTimer(timer)
+          return
+        }
+
+        if (isRecovery) {
+          this.resetTimer(timer)
+          this.runningTimer++
+
+          log(`Start next timer with id ${this.timers[this.runningTimer].id}`)
+          this.startTimer(this.timers[this.runningTimer])
+        } else {
+          log(`Start next timer with id ${this.timers[this.runningTimer].id}`)
+          this.startTimer(this.timers[this.runningTimer], true)
+        }
+
+        return
+      }
+
+      if (secondsLeft > 0 && secondsLeft < 4) {
+        synth.triggerAttackRelease('C4', '0.2')
+      }
+    })
+  },
+  async startTimer(currentTimer?: TimerData, isRecovery = false) {
+    Tone.start()
     if (!this.timers.length) return
 
     const timer = currentTimer || this.timers[0]
 
+    log(`Starting timer with id: ${timer.id}`)
+
+    const updateSeconds = this.updateSeconds(timer, isRecovery)
+
     timer.start = true
 
-    workerApi.runTimer(
+    await workerApi.runTimer(
       timer.exerciseTime,
-      proxy((secondsLeft) => {
-        timer[isRecovery ? 'recoverySecondsLeft' : 'secondsLeft'] = secondsLeft
-
-        if (secondsLeft === 0) {
-          synth.triggerAttackRelease('G4', '0.6')
-
-          if (this.runningTimer === this.timers.length - 1 && isRecovery) {
-            this.resetTimer(timer)
-            return
-          }
-
-          // Start the next timer
-          if (isRecovery) {
-            this.resetTimer(timer)
-            this.runningTimer++
-            this.startTimer(this.timers[this.runningTimer])
-          } else {
-            // Run recovery time for current timer
-            this.startTimer(this.timers[this.runningTimer], true)
-          }
-
-          return
-        }
-
-        if (secondsLeft > 0 && secondsLeft < 4) {
-          synth.triggerAttackRelease('C4', '0.2')
-        }
-      })
+      proxy((secondsLeft) => updateSeconds(secondsLeft))
     )
   }
 })

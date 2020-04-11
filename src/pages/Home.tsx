@@ -44,6 +44,7 @@ export const Home: React.FC = () => {
               max='120'
               min='0'
               type='range'
+              pattern='\d+'
               step='5'
               value={store.newTimer.exerciseTime}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -64,6 +65,7 @@ export const Home: React.FC = () => {
               type='range'
               max='120'
               min='0'
+              pattern='\d+'
               step='5'
               value={store.newTimer.recoveryTime}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
