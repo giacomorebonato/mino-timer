@@ -1,5 +1,7 @@
 # Mino-Timer
 
+[mino-timer.now.sh](https://mino-timer.now.sh)
+
 <p align="center">
   <a href="https://mino-timer.now.sh">
     <img alt="react-router" src="https://mino-timer.now.sh/images/timer-screenshot.png" width="600">
@@ -20,12 +22,12 @@ Timer for fitness activity.
 ## To do
 
 * Text to speech for the exercise name
-* Fix IOS bug `Start time must be strictly greater than previous start time`
+* PWA
 * What else?
 
 ## Technicality
 
-The timers are executed in a worker.
+The timers are executed in a worker. They should be more precise and work also when the window gets unfocused.
 
 ## Thanks
 
