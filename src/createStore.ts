@@ -14,6 +14,22 @@ const synth = new Tone.Synth().toMaster()
 const DEFAULT_EXERCISE_TIME = 30
 const DEFAULT_RECOVERY_TIME = 15
 
+const speak = (text: string) => {
+  return new Promise((resolve, reject) => {
+    const ssu = new SpeechSynthesisUtterance(text)
+
+    window.speechSynthesis.speak(ssu)
+
+    ssu.onend = () => {
+      resolve()
+    }
+
+    ssu.onerror = () => {
+      reject()
+    }
+  })
+}
+
 export const createStore = () => ({
   newTimer: {
     id: 1,
@@ -73,6 +89,7 @@ export const createStore = () => ({
 
         if (this.runningTimer === this.timers.length - 1 && isRecovery) {
           this.resetTimer(timer)
+          speak('Congratulations! You completed your workout.')
           return
         }
 
@@ -106,19 +123,18 @@ export const createStore = () => ({
 
     log(`Starting timer with id: ${timer.id}`)
 
-    const msg = new SpeechSynthesisUtterance(
+    await speak(
       isRecovery
         ? `Rest for ${timer.recoveryTime} seconds`
         : `Get ready for ${timer.exerciseTime} seconds of ${timer.name}`
     )
-    window.speechSynthesis.speak(msg)
 
     const updateSeconds = this.updateSeconds(timer, isRecovery)
 
     timer.start = true
 
     await this.timeWorker.runTimer(
-      timer.exerciseTime,
+      isRecovery ? timer.recoveryTime : timer.exerciseTime,
       proxy((secondsLeft: number) => updateSeconds(secondsLeft))
     )
   }
