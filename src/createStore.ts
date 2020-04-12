@@ -31,6 +31,7 @@ export const createStore = () => ({
   },
   clearTimers() {
     this.timers = []
+    this.runningTimer = 0
   },
   stopTimers() {
     this.timeWorker.clearInterval()
