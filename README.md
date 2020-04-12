@@ -1,5 +1,11 @@
 # Mino-Timer
 
+<p align="center">
+  <a href="https://mino-timer.now.sh">
+    <img alt="react-router" src="https://mino-timer.now.sh/images/timer-screenshot.png" width="600">
+  </a>
+</p>
+
 ## Description
 
 Timer for fitness activity.

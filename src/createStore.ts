@@ -1,4 +1,4 @@
-import { proxy, Remote, wrap } from 'comlink'
+import { proxy, releaseProxy, Remote, wrap } from 'comlink'
 import debug from 'debug'
 import * as Tone from 'tone'
 import { TimerWorker, TimerWorkerType } from './workers/timer-worker'
@@ -34,6 +34,7 @@ export const createStore = () => ({
   },
   stopTimers() {
     this.timeWorker.clearInterval()
+    this.timeWorker[releaseProxy]()
   },
   changeExerciseTime(seconds: number) {
     this.newTimer.secondsLeft = seconds
