@@ -76,7 +76,7 @@ export const Home: React.FC = () => {
               speechSynthesis.speak(ssu)
             }}
           >
-            Create timer
+            Add round
           </Button>
         </form>
         <Box mt='2'>
