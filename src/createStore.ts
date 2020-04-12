@@ -1,42 +1,18 @@
 import { proxy, releaseProxy, Remote, wrap } from 'comlink'
 import debug from 'debug'
-import { detect } from 'detect-browser'
 import * as Tone from 'tone'
+import { speak } from './lib'
 import { TimerWorker, TimerWorkerType } from './workers/timer-worker'
 
-const browser = detect()
 const log = debug('createStore')
 const worker = new Worker('./workers/timer-worker', {
   name: 'timer-worker',
   type: 'module'
 })
 const StoreTimerWorker = wrap<TimerWorkerType>(worker)
-
 const synth = new Tone.Synth().toMaster()
 const DEFAULT_EXERCISE_TIME = 30
 const DEFAULT_RECOVERY_TIME = 15
-
-const speak = (text: string) => {
-  return new Promise((resolve, reject) => {
-    const ssu = new SpeechSynthesisUtterance(text)
-
-    window.speechSynthesis.speak(ssu)
-
-    if (browser!.os === 'iOS') {
-      setTimeout(() => {
-        resolve()
-      }, 2000)
-    } else {
-      ssu.onend = () => {
-        resolve()
-      }
-    }
-
-    ssu.onerror = () => {
-      reject()
-    }
-  })
-}
 
 export const createStore = () => ({
   newTimer: {
@@ -78,7 +54,7 @@ export const createStore = () => ({
     this.timers.push(this.newTimer)
     this.newTimer = {
       id: this.newTimer.id + 1,
-      name: '',
+      name: 'Squats',
       exerciseTime: this.newTimer.exerciseTime,
       recoveryTime: this.newTimer.recoveryTime,
       recoverySecondsLeft: this.newTimer.recoverySecondsLeft,
@@ -131,11 +107,11 @@ export const createStore = () => ({
 
     log(`Starting timer with id: ${timer.id}`)
 
-    // await speak(
-    //   isRecovery
-    //     ? `Rest for ${timer.recoveryTime} seconds`
-    //     : `Get ready for ${timer.exerciseTime} seconds of ${timer.name}`
-    // )
+    await speak(
+      isRecovery
+        ? `Rest for ${timer.recoveryTime} seconds.`
+        : `Get ready for ${timer.exerciseTime} seconds of ${timer.name}.`
+    )
 
     const updateSeconds = this.updateSeconds(timer, isRecovery)
 
