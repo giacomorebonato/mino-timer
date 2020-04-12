@@ -24,6 +24,7 @@ export const createStore = () => ({
     secondsLeft: DEFAULT_EXERCISE_TIME,
     start: false
   } as TimerData,
+  pausedTimer: 0,
   runningTimer: 0,
   timers: [] as TimerData[],
   changeName(name: string) {
@@ -34,6 +35,8 @@ export const createStore = () => ({
     this.runningTimer = 0
   },
   stopTimers() {
+    this.pausedTimer = this.runningTimer
+    this.timers[this.runningTimer].start = false
     this.timeWorker.clearInterval()
     this.timeWorker[releaseProxy]()
   },
@@ -103,14 +106,19 @@ export const createStore = () => ({
 
     this.timeWorker = await new StoreTimerWorker()
 
-    const timer = currentTimer || this.timers[0]
+    let timer = currentTimer || this.timers[0]
+
+    if (this.pausedTimer) {
+      timer = this.timers[this.pausedTimer]
+      this.pausedTimer = 0
+    }
 
     log(`Starting timer with id: ${timer.id}`)
 
     await speak(
       isRecovery
-        ? `Rest for ${timer.recoveryTime} seconds.`
-        : `Get ready for ${timer.exerciseTime} seconds of ${timer.name}.`
+        ? `Rest for ${timer.recoverySecondsLeft} seconds.`
+        : `Get ready for ${timer.secondsLeft} seconds of ${timer.name}.`
     )
 
     const updateSeconds = this.updateSeconds(timer, isRecovery)

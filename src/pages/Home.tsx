@@ -113,7 +113,7 @@ export const Home: React.FC = () => {
                   store.stopTimers()
                 }}
               >
-                Stop
+                Pause
               </Button>
               <Button
                 flex='1'
