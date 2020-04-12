@@ -5,29 +5,37 @@ const log = debug('speak')
 const browser = detect()
 
 export const speak = (text: string) => {
+  if (!speechSynthesis || speechSynthesis.speaking) {
+    log('speechSynthesis not available')
+    return
+  }
+
   return new Promise((resolve, reject) => {
-    if ('speechSynthesis' in window) {
-      const ssu = new SpeechSynthesisUtterance(text)
-      ssu.lang = 'en-US'
+    const ssu = new SpeechSynthesisUtterance(text)
+    ssu.lang = 'en-US'
 
-      if (browser!.os === 'iOS') {
-        setTimeout(() => {
-          resolve()
-        }, 2000)
-      } else {
-        ssu.onend = () => {
-          resolve()
-        }
+    if (browser!.os === 'iOS') {
+      log('speak for Safari iOS')
+      const iosTrigger = document.getElementById(
+        'ios-speak'
+      ) as HTMLButtonElement
+
+      const customSpeak = (e: MouseEvent) => {
+        e.preventDefault()
+        speechSynthesis.speak(ssu)
       }
 
-      ssu.onerror = (error) => {
-        debug(JSON.stringify(error))
-        reject()
-      }
-
-      speechSynthesis.speak(ssu)
+      iosTrigger.addEventListener('click', customSpeak)
+      iosTrigger.click()
+      iosTrigger.removeEventListener('click', customSpeak)
+      setTimeout(() => {
+        resolve()
+      }, 2000)
     } else {
-      log('speechSynthesis not available')
+      ssu.onend = () => {
+        resolve()
+      }
+      speechSynthesis.speak(ssu)
     }
   })
 }

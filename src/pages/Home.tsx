@@ -67,7 +67,15 @@ export const Home: React.FC = () => {
               }}
             />
           </FormControl>
-          <Button type='submit' variantColor='teal'>
+          <Button
+            id='ios-speak'
+            type='submit'
+            variantColor='teal'
+            onClick={() => {
+              const ssu = new SpeechSynthesisUtterance('')
+              speechSynthesis.speak(ssu)
+            }}
+          >
             Create timer
           </Button>
         </form>
