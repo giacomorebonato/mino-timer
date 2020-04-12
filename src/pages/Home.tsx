@@ -96,6 +96,7 @@ export const Home: React.FC = () => {
           <Box mt='2'>
             <Flex>
               <Button
+                isDisabled={store.timers.some((timer) => timer.start)}
                 flex='1'
                 type='button'
                 variantColor='teal'
