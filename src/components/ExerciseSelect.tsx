@@ -4,11 +4,25 @@ import React from 'react'
 const exercises = [
   'Crunches',
   'Jumping Jacks',
-  'Burpies',
+  'Jumping Jacks to the Step',
+  'Burpees',
+  'Froggy Jumps',
+  'Front Kick Lunge',
+  'Jogging in Place',
+  'Jogging with High Knees',
+  'Long Jumps',
+  'Lunges',
+  'Mountain Climbers',
+  'Plyo Lunges',
+  'Plyo Jacks',
+  'Prisoner Squat Jumps',
   'Push ups',
   'Reverse Crunches',
   'Russian twists',
-  'Squats'
+  'Side to Side Jumping Lunges',
+  'Squat Jumps',
+  'Squats',
+  'Toe Taps with Jumps'
 ]
 
 export const ExerciseSelect: React.FC<React.SelectHTMLAttributes<
