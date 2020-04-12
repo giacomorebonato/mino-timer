@@ -1,8 +1,10 @@
 import { proxy, releaseProxy, Remote, wrap } from 'comlink'
 import debug from 'debug'
+import { detect } from 'detect-browser'
 import * as Tone from 'tone'
 import { TimerWorker, TimerWorkerType } from './workers/timer-worker'
 
+const browser = detect()
 const log = debug('createStore')
 const worker = new Worker('./workers/timer-worker', {
   name: 'timer-worker',
@@ -20,8 +22,14 @@ const speak = (text: string) => {
 
     window.speechSynthesis.speak(ssu)
 
-    ssu.onend = () => {
-      resolve()
+    if (browser!.os === 'iOS') {
+      setTimeout(() => {
+        resolve()
+      }, 2000)
+    } else {
+      ssu.onend = () => {
+        resolve()
+      }
     }
 
     ssu.onerror = () => {
@@ -123,11 +131,11 @@ export const createStore = () => ({
 
     log(`Starting timer with id: ${timer.id}`)
 
-    await speak(
-      isRecovery
-        ? `Rest for ${timer.recoveryTime} seconds`
-        : `Get ready for ${timer.exerciseTime} seconds of ${timer.name}`
-    )
+    // await speak(
+    //   isRecovery
+    //     ? `Rest for ${timer.recoveryTime} seconds`
+    //     : `Get ready for ${timer.exerciseTime} seconds of ${timer.name}`
+    // )
 
     const updateSeconds = this.updateSeconds(timer, isRecovery)
 
