@@ -106,6 +106,11 @@ export const createStore = () => ({
 
     log(`Starting timer with id: ${timer.id}`)
 
+    const msg = new SpeechSynthesisUtterance(
+      `Get ready for ${timer.exerciseTime} seconds of ${timer.name}`
+    )
+    window.speechSynthesis.speak(msg)
+
     const updateSeconds = this.updateSeconds(timer, isRecovery)
 
     timer.start = true
