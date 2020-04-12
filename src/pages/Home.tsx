@@ -8,6 +8,7 @@ import {
   Text
 } from '@chakra-ui/core'
 import { useObserver } from 'mobx-react-lite'
+import NoSleep from 'nosleep.js'
 import React from 'react'
 import { ExerciseSelect, Timer, TimeSelect } from '../components'
 import { useStore } from '../hooks/useStore'
@@ -73,6 +74,8 @@ export const Home: React.FC = () => {
             variantColor='teal'
             onClick={() => {
               const ssu = new SpeechSynthesisUtterance('')
+              const noSleep = new NoSleep()
+              noSleep.enable()
               speechSynthesis.speak(ssu)
             }}
           >
