@@ -2,7 +2,8 @@ import { proxy, releaseProxy, Remote } from 'comlink'
 import debug from 'debug'
 import * as Tone from 'tone'
 import { speak } from './lib'
-import { getTimerWorker, TimerWorker } from './workers/timer-worker'
+import { getTimerWorker } from './workers/getTimerWorker'
+import { TimerWorker } from './workers/timer-worker'
 
 export const createStore = () => {
   const log = debug('createStore')

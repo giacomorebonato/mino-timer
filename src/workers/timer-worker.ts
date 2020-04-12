@@ -1,4 +1,4 @@
-import { expose, wrap } from 'comlink'
+import { expose } from 'comlink'
 import debug from 'debug'
 
 const log = debug('time-worker')
@@ -20,15 +20,6 @@ export class TimerWorker {
       await callback(seconds)
     }, 1000)
   }
-}
-
-export const getTimerWorker = () => {
-  const worker = new Worker('./workers/timer-worker', {
-    name: 'timer-worker',
-    type: 'module'
-  })
-
-  return wrap<TimerWorkerType>(worker)
 }
 
 export type TimerWorkerType = typeof TimerWorker
