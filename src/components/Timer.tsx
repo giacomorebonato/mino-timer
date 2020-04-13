@@ -1,7 +1,7 @@
 import { Box, Flex, Text } from '@chakra-ui/core'
 import React from 'react'
 
-type TimerProps = Omit<TimerData, 'id'>
+type TimerProps = Omit<ExerciseData, 'id'>
 
 export const Timer: React.FC<TimerProps> = ({
   name,

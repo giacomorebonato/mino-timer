@@ -1,4 +1,4 @@
-interface TimerData {
+interface ExerciseData {
   id: number
   name: string
   exerciseTime: number

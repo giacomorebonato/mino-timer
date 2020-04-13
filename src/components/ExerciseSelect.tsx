@@ -13,6 +13,7 @@ const exercises = [
   'Long Jumps',
   'Lunges',
   'Mountain Climbers',
+  'Plank',
   'Plyo Lunges',
   'Plyo Jacks',
   'Prisoner Squat Jumps',

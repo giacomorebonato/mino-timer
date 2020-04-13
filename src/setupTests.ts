@@ -6,7 +6,6 @@ import '@testing-library/jest-dom/extend-expect'
 
 jest.mock('comlink')
 jest.mock('./workers/getTimerWorker', () => ({
-  getTimerWorker: () => {
-    return {}
-  }
+  getTimerWorker: async () =>
+    (await import('./workers/timer-worker')).TimerWorker
 }))
