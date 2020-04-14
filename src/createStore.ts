@@ -7,6 +7,12 @@ import { TimerWorker } from './workers/timer-worker'
 
 const log = debug('createStore')
 
+type CurrentRound = {
+  round: RoundData | null
+  exercise: ExerciseData | null
+  isRecovery: boolean
+}
+
 export const createStore = () => {
   const StoreTimerWorker = getTimerWorker()
   const synth = new Tone.Synth().toMaster()
@@ -21,44 +27,36 @@ export const createStore = () => {
       recoverySecondsLeft: DEFAULT_RECOVERY_TIME,
       exerciseTime: DEFAULT_EXERCISE_TIME,
       secondsLeft: DEFAULT_EXERCISE_TIME,
-      start: false
+      start: false,
+      round: 1 as RoundId
     } as ExerciseData,
-    rounds: {
-      1: {
-        exercises: [] as ExerciseData[]
-      },
-      2: {
-        exercises: [] as ExerciseData[]
-      },
-      3: {
-        exercises: [] as ExerciseData[]
-      },
-      4: {
-        exercises: [] as ExerciseData[]
-      }
-    },
+    current: {
+      exercise: null,
+      round: null,
+      isRecovery: false
+    } as CurrentRound,
+    rounds: new Map<Number, RoundData>(),
     idle: false,
-    pausedTimer: 0,
-    runningTimer: 0,
-    timers: [] as ExerciseData[],
     changeName(name: string) {
       this.newExercise.name = name
     },
-    clearTimers() {
-      this.timers = []
-      this.runningTimer = 0
+    changeDestinationRound(round: RoundId) {
+      this.newExercise.round = round
     },
-    stopTimers() {
+    clearTimers() {
+      this.rounds.clear()
+      this.current = {
+        round: (null as unknown) as RoundData,
+        exercise: (null as unknown) as ExerciseData,
+        isRecovery: false
+      }
+    },
+    stopExercise() {
       this.idle = false
 
       if (this.timeWorker) {
         this.timeWorker.clearInterval()
         this.timeWorker[releaseProxy]()
-      }
-      this.pausedTimer = this.runningTimer
-
-      if (this.timers[this.runningTimer]) {
-        this.timers[this.runningTimer].start = false
       }
     },
     changeExerciseTime(seconds: number) {
@@ -70,87 +68,128 @@ export const createStore = () => {
       this.newExercise.recoverySecondsLeft = seconds
     },
     resetTimer(timer: ExerciseData) {
-      this.stopTimers()
+      this.stopExercise()
       timer.start = false
       timer.secondsLeft = timer.exerciseTime
       timer.recoverySecondsLeft = timer.recoveryTime
     },
-    addTimer() {
-      this.timers.push(this.newExercise)
+    addExercise() {
+      if (!this.rounds.has(this.newExercise.round)) {
+        this.rounds.set(this.newExercise.round, {
+          id: this.newExercise.round,
+          exercises: [this.newExercise],
+          rest: {
+            recoveryTime: DEFAULT_RECOVERY_TIME,
+            secondsLeft: DEFAULT_RECOVERY_TIME
+          },
+          repetitions: 1
+        })
+      } else {
+        this.rounds
+          .get(this.newExercise.round)!
+          .exercises.push(this.newExercise)
+      }
+
       this.newExercise = {
-        id: this.newExercise.id + 1,
-        name: 'Squats',
-        exerciseTime: this.newExercise.exerciseTime,
-        recoveryTime: this.newExercise.recoveryTime,
-        recoverySecondsLeft: this.newExercise.recoverySecondsLeft,
-        secondsLeft: this.newExercise.secondsLeft,
-        start: false
+        ...this.newExercise,
+        id: this.newExercise.id + 1
       }
     },
-    updateSeconds(timer: ExerciseData, isRecovery: boolean) {
+    updateSeconds(exercise: ExerciseData, isRecovery: boolean) {
       return proxy((secondsLeft: number) => {
         log(`Seconds left ${secondsLeft}`)
+        log(`Recovery: ${isRecovery}`)
 
-        timer[isRecovery ? 'recoverySecondsLeft' : 'secondsLeft'] = secondsLeft
-
-        if (secondsLeft === 0) {
-          synth.triggerAttackRelease('G4', '0.6')
-
-          if (this.runningTimer === this.timers.length - 1 && isRecovery) {
-            this.resetTimer(timer)
-            speak('Congratulations! You completed your workout.')
-            this.idle = false
-            return
-          }
-
-          if (isRecovery) {
-            this.resetTimer(timer)
-            this.runningTimer++
-
-            log(`Start next timer with id ${this.timers[this.runningTimer].id}`)
-            this.startTimer(this.timers[this.runningTimer])
-          } else {
-            log(`Start next timer with id ${this.timers[this.runningTimer].id}`)
-            this.startTimer(this.timers[this.runningTimer], true)
-          }
-
-          return
-        }
+        exercise[
+          isRecovery ? 'recoverySecondsLeft' : 'secondsLeft'
+        ] = secondsLeft
 
         if (secondsLeft > 0 && secondsLeft < 4) {
           synth.triggerAttackRelease('C4', '0.2')
         }
+
+        if (secondsLeft === 0) {
+          synth.triggerAttackRelease('G4', '0.4')
+
+          setTimeout(() => {
+            this.nextExercise()
+          }, 1000)
+        }
       })
     },
     timeWorker: (null as unknown) as Remote<TimerWorker>,
-    async startTimer(currentTimer?: ExerciseData, isRecovery = false) {
+    nextExercise() {
+      if (!this.current.round) {
+        throw Error('Undefined current round.')
+      }
+      if (!this.current.exercise) {
+        throw Error('Undefined current exercise.')
+      }
+
+      if (this.current.isRecovery) {
+        const index = this.current.round.exercises.findIndex(
+          (item) => item === this.current.exercise
+        )
+
+        if (index < this.current.round.exercises.length - 1) {
+          this.current.exercise = this.current.round.exercises[index + 1]
+        } else {
+          if (this.rounds.has(this.current.round.id + 1)) {
+            const nextRound = this.rounds.get(this.current.round.id + 1)!
+            this.current.round = nextRound
+            this.current.exercise = nextRound.exercises[0]
+          } else {
+            speak('Congratulations! You completed your workout.')
+            this.current.isRecovery = false
+            this.current.exercise = null
+            this.current.round = null
+            this.idle = false
+            return
+          }
+        }
+      }
+
+      this.current.isRecovery = !this.current.isRecovery
+
+      this.startExercise()
+    },
+    async startExercise() {
       Tone.start()
-      if (!this.timers.length) return
+      if (!this.rounds.size) return
       this.idle = true
+
+      if (!this.current.round) {
+        const firstRound = this.rounds.get(1)!
+        this.current.round = firstRound
+        this.current.exercise = firstRound.exercises[0]
+      }
 
       this.timeWorker = await new StoreTimerWorker()
 
-      let timer = currentTimer || this.timers[0]
+      log('Starting')
+      log(`Round: ${this.current.round}`)
+      log(`Exercise: ${this.current.exercise}`)
 
-      if (this.pausedTimer) {
-        timer = this.timers[this.pausedTimer]
-        this.pausedTimer = 0
+      if (!this.current.round) {
+        throw Error('Undefined current round.')
+      }
+      if (!this.current.exercise) {
+        throw Error('Undefined current exercise.')
       }
 
-      log(`Starting timer with id: ${timer.id}`)
-
       await speak(
-        isRecovery
-          ? `Rest for ${timer.recoverySecondsLeft} seconds.`
-          : `Get ready for ${timer.secondsLeft} seconds of ${timer.name}.`
+        this.current.isRecovery
+          ? `Rest for ${this.current.exercise.recoverySecondsLeft} seconds.`
+          : `Get ready for ${this.current.exercise.secondsLeft} seconds of ${this.current.exercise.name}.`
       )
 
-      const updateSeconds = this.updateSeconds(timer, isRecovery)
-
-      timer.start = true
+      const updateSeconds = this.updateSeconds(
+        this.current.exercise,
+        this.current.isRecovery
+      )
 
       await this.timeWorker.runTimer(
-        isRecovery ? timer.recoveryTime : timer.exerciseTime,
+        this.current.exercise.exerciseTime,
         proxy((secondsLeft: number) => updateSeconds(secondsLeft))
       )
     }

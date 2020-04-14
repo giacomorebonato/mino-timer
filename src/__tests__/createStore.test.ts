@@ -40,19 +40,49 @@ describe('createStore', () => {
     expect(typeof store).toBe('object')
   })
 
-  describe('startTimer()', () => {
+  describe('addExercise()', () => {
     let store: TStore
     beforeAll(() => {
       store = createStore()
-      store.startTimer()
     })
 
+    it("creates a round if it doesn't exist", () => {
+      const id = store.newExercise.id
+      store.newExercise.round = 2
+      store.addExercise()
+
+      expect(store.rounds.get(2)!.exercises[0].id).toEqual(id)
+    })
+
+    it('adds exercises to an existing round', () => {
+      const id = store.newExercise.id
+      store.newExercise.round = 2
+      store.addExercise()
+
+      expect(store.rounds.get(2)!.exercises[1].id).toEqual(id)
+    })
+  })
+
+  describe('startTimer()', () => {
     it('executes Tone.start()', () => {
+      const store = createStore()
+      store.startExercise()
       expect(Tone.start).toHaveBeenCalled()
+    })
+
+    describe('when exercises are created', () => {
+      it('sets idle to true', () => {
+        const store = createStore()
+        store.addExercise()
+        store.startExercise()
+        expect(store.idle).toBe(true)
+      })
     })
 
     describe('when no exercises are created', () => {
       it("doesn't set idle to false", () => {
+        const store = createStore()
+        store.startExercise()
         expect(store.idle).toBe(false)
       })
     })
@@ -62,8 +92,8 @@ describe('createStore', () => {
     let store: TStore
     beforeAll(() => {
       store = createStore()
-      store.startTimer()
-      store.stopTimers()
+      store.startExercise()
+      store.stopExercise()
     })
     it('sets idle to false', () => {
       expect(store.idle).toBe(false)

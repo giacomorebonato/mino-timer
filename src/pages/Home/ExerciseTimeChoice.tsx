@@ -1,4 +1,5 @@
 import { FormControl, FormLabel } from '@chakra-ui/core'
+import { useObserver } from 'mobx-react-lite'
 import React from 'react'
 import { TimeSelect } from '../../components'
 import { useStore } from '../../hooks/useStore'
@@ -6,7 +7,7 @@ import { useStore } from '../../hooks/useStore'
 export const ExerciseTimeChoice = () => {
   const store = useStore()
 
-  return (
+  return useObserver(() => (
     <FormControl mb='2'>
       <FormLabel htmlFor='exercise-time'>
         Exercise time: {store.newExercise.exerciseTime} seconds
@@ -21,5 +22,5 @@ export const ExerciseTimeChoice = () => {
         }}
       />
     </FormControl>
-  )
+  ))
 }

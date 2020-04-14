@@ -3,7 +3,7 @@ import React from 'react'
 
 const seconds = [] as number[]
 
-for (let i = 0; i < 24; i++) {
+for (let i = 1; i < 24; i++) {
   seconds.push(i * 5)
 }
 

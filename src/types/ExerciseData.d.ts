@@ -1,3 +1,4 @@
+type RoundId = 1 | 2 | 3 | 4 | 5
 interface ExerciseData {
   id: number
   name: string
@@ -6,4 +7,5 @@ interface ExerciseData {
   recoverySecondsLeft: number
   secondsLeft: number
   start: boolean
+  round: RoundId
 }
