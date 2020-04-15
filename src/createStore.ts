@@ -165,6 +165,22 @@ export const createStore = () => {
 
       this.startExercise()
     },
+    async playSoundsBeforeStart() {
+      return new Promise(async (resolve) => {
+        await this.timeWorker.runTimer(
+          5,
+          proxy((beginningSeconds: number) => {
+            if (beginningSeconds > 1) {
+              synth.triggerAttackRelease('C4', '0.2')
+            } else if (beginningSeconds === 1) {
+              synth.triggerAttackRelease('G4', '0.4')
+            } else {
+              resolve()
+            }
+          })
+        )
+      })
+    },
     async startExercise() {
       if (!this.rounds.size) return
       this.idle = true
@@ -199,6 +215,10 @@ export const createStore = () => {
         this.current.exercise,
         this.current.isRecovery
       )
+
+      if (!this.current.isRecovery) {
+        await this.playSoundsBeforeStart()
+      }
 
       await this.timeWorker.runTimer(
         this.current.exercise.exerciseTime,
