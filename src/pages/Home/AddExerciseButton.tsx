@@ -1,5 +1,4 @@
 import { Button } from '@chakra-ui/core'
-import { useObserver } from 'mobx-react-lite'
 import NoSleep from 'nosleep.js'
 import React, { useCallback, useRef } from 'react'
 import * as Tone from 'tone'
@@ -21,7 +20,7 @@ export const AddExerciseButton = React.memo(() => {
     isFirstClick.current = false
   }, [])
 
-  return useObserver(() => (
+  return (
     <Button
       id='ios-speak'
       type='submit'
@@ -30,5 +29,5 @@ export const AddExerciseButton = React.memo(() => {
     >
       Add exercise
     </Button>
-  ))
+  )
 })
