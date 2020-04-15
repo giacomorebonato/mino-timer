@@ -6,6 +6,5 @@ interface ExerciseData {
   recoveryTime: number
   recoverySecondsLeft: number
   secondsLeft: number
-  start: boolean
   round: RoundId
 }

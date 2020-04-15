@@ -64,12 +64,6 @@ describe('createStore', () => {
   })
 
   describe('startTimer()', () => {
-    it('executes Tone.start()', () => {
-      const store = createStore()
-      store.startExercise()
-      expect(Tone.start).toHaveBeenCalled()
-    })
-
     describe('when exercises are created', () => {
       it('sets idle to true', () => {
         const store = createStore()

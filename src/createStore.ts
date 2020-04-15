@@ -27,7 +27,6 @@ export const createStore = () => {
       recoverySecondsLeft: DEFAULT_RECOVERY_TIME,
       exerciseTime: DEFAULT_EXERCISE_TIME,
       secondsLeft: DEFAULT_EXERCISE_TIME,
-      start: false,
       round: 1 as RoundId
     } as ExerciseData,
     current: {
@@ -45,6 +44,8 @@ export const createStore = () => {
     },
     clearTimers() {
       this.rounds.clear()
+      this.idle = false
+      this.rounds = new Map()
       this.current = {
         round: (null as unknown) as RoundData,
         exercise: (null as unknown) as ExerciseData,
@@ -55,8 +56,12 @@ export const createStore = () => {
       this.idle = false
 
       if (this.timeWorker) {
-        this.timeWorker.clearInterval()
-        this.timeWorker[releaseProxy]()
+        try {
+          this.timeWorker.clearInterval()
+          this.timeWorker[releaseProxy]()
+        } catch (error) {
+          debug('The exercise was already stopped')
+        }
       }
     },
     changeExerciseTime(seconds: number) {
@@ -69,12 +74,12 @@ export const createStore = () => {
     },
     resetTimer(timer: ExerciseData) {
       this.stopExercise()
-      timer.start = false
       timer.secondsLeft = timer.exerciseTime
       timer.recoverySecondsLeft = timer.recoveryTime
     },
     addExercise() {
       if (!this.rounds.has(this.newExercise.round)) {
+        log(`Creating round ${this.newExercise.round}`)
         this.rounds.set(this.newExercise.round, {
           id: this.newExercise.round,
           exercises: [this.newExercise],
@@ -85,6 +90,7 @@ export const createStore = () => {
           repetitions: 1
         })
       } else {
+        log(`Adding exercise to round ${this.newExercise.round}`)
         this.rounds
           .get(this.newExercise.round)!
           .exercises.push(this.newExercise)
@@ -154,7 +160,6 @@ export const createStore = () => {
       this.startExercise()
     },
     async startExercise() {
-      Tone.start()
       if (!this.rounds.size) return
       this.idle = true
 
