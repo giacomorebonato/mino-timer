@@ -30,12 +30,7 @@ export const TimerActions = () => {
           >
             Pause
           </Button>
-          <Button
-            isDisabled={store.idle}
-            flex='1'
-            type='button'
-            onClick={() => store.clearTimers()}
-          >
+          <Button flex='1' type='button' onClick={() => store.clearTimers()}>
             Clear
           </Button>
         </Flex>

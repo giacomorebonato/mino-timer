@@ -29,6 +29,7 @@ export const createStore = () => {
       secondsLeft: DEFAULT_EXERCISE_TIME,
       round: 1 as RoundId
     } as ExerciseData,
+    isProxyReleased: false,
     current: {
       exercise: null,
       round: null,
@@ -52,16 +53,15 @@ export const createStore = () => {
         isRecovery: false
       }
     },
-    stopExercise() {
+    async stopExercise() {
       this.idle = false
 
+      if (this.isProxyReleased) return
+
       if (this.timeWorker) {
-        try {
-          this.timeWorker.clearInterval()
-          this.timeWorker[releaseProxy]()
-        } catch (error) {
-          debug('The exercise was already stopped')
-        }
+        this.isProxyReleased = true
+        await this.timeWorker.clearInterval()
+        this.timeWorker[releaseProxy]()
       }
     },
     changeExerciseTime(seconds: number) {
@@ -162,6 +162,7 @@ export const createStore = () => {
     async startExercise() {
       if (!this.rounds.size) return
       this.idle = true
+      this.isProxyReleased = false
 
       if (!this.current.round) {
         const firstRound = this.rounds.get(1)!

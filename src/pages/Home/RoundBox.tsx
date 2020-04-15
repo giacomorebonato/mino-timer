@@ -18,7 +18,6 @@ export const RoundBox: React.FC<RoundBoxProps> = ({ round }) => {
           recoverySecondsLeft={e.recoverySecondsLeft}
           secondsLeft={e.secondsLeft}
           key={`${round.id}-round-${e.id}`}
-          start={e.start}
           name={e.name}
         />
       ))}

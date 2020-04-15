@@ -1,13 +1,12 @@
 import { Box, Flex, Text } from '@chakra-ui/core'
 import React from 'react'
 
-type TimerProps = Omit<ExerciseData, 'id' | 'round'>
+type TimerProps = Omit<ExerciseData, 'id' | 'round' | 'start'>
 
 export const Timer: React.FC<TimerProps> = ({
   name,
   recoverySecondsLeft,
-  secondsLeft,
-  start
+  secondsLeft
 }) => {
   return (
     <Box
@@ -15,7 +14,8 @@ export const Timer: React.FC<TimerProps> = ({
       borderWidth='1px'
       mt='1'
       p='2'
-      borderColor={start ? 'green.400' : 'gray.400'}
+      // I need to highlight this
+      borderColor={true ? 'green.400' : 'gray.400'}
     >
       <Flex flexDirection='row'>
         <Box flex='1'>
