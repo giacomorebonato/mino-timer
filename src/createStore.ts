@@ -123,6 +123,7 @@ export const createStore = () => {
           synth.triggerAttackRelease('G4', '0.4')
 
           setTimeout(() => {
+            exercise.secondsLeft = exercise.exerciseTime
             this.nextExercise()
           }, 1000)
         }
