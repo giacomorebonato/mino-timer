@@ -60,8 +60,13 @@ export const createStore = () => {
 
       if (this.timeWorker) {
         this.isProxyReleased = true
-        await this.timeWorker.clearInterval()
-        this.timeWorker[releaseProxy]()
+
+        try {
+          await this.timeWorker.clearInterval()
+          this.timeWorker[releaseProxy]()
+        } catch (error) {
+          log('Proxy is already released.')
+        }
       }
     },
     changeExerciseTime(seconds: number) {

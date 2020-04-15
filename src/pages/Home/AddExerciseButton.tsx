@@ -3,11 +3,9 @@ import { useObserver } from 'mobx-react-lite'
 import NoSleep from 'nosleep.js'
 import React, { useCallback, useRef } from 'react'
 import * as Tone from 'tone'
-import { useStore } from '../../hooks/useStore'
 
-export const AddExerciseButton = () => {
+export const AddExerciseButton = React.memo(() => {
   const isFirstClick = useRef(true)
-  const store = useStore()
   const handleClick = useCallback(() => {
     if (!isFirstClick.current) return
 
@@ -27,11 +25,10 @@ export const AddExerciseButton = () => {
     <Button
       id='ios-speak'
       type='submit'
-      isDisabled={store.idle}
       variantColor='teal'
       onClick={handleClick}
     >
       Add exercise
     </Button>
   ))
-}
+})

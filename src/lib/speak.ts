@@ -12,13 +12,11 @@ export const speak = (text: string) => {
 
   return new Promise((resolve, reject) => {
     const ssu = new SpeechSynthesisUtterance(text)
+    const iosTrigger = document.getElementById('ios-speak') as HTMLButtonElement
     ssu.lang = 'en-US'
 
     if (browser!.os === 'iOS') {
       log('speak for Safari iOS')
-      const iosTrigger = document.getElementById(
-        'ios-speak'
-      ) as HTMLButtonElement
 
       const customSpeak = (e: MouseEvent) => {
         e.preventDefault()
