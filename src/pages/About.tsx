@@ -20,10 +20,9 @@ export const About: React.FC = () => {
         Why Mino-Timer?
       </Text>
       <Text>
-        Web pages have more and more functionalities that make them close to
-        native mobile application. This project started as an exercise and then,
-        since I am doing exercise by myself at home in these days, I started to
-        make it good.
+        Web pages can be pushed to be close to native applications. This project
+        started as a programming exercise and then I started to use it for
+        physical exercise too.
       </Text>
 
       <Text as='h2' fontSize='lg' fontWeight='bold'>
