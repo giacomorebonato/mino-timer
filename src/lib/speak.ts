@@ -5,7 +5,7 @@ const log = debug('speak')
 const browser = detect()
 
 export const speak = (text: string) => {
-  if (!speechSynthesis || speechSynthesis.speaking) {
+  if (!window.speechSynthesis || window.speechSynthesis.speaking) {
     log('speechSynthesis not available')
     return
   }
@@ -20,7 +20,7 @@ export const speak = (text: string) => {
 
       const customSpeak = (e: MouseEvent) => {
         e.preventDefault()
-        speechSynthesis.speak(ssu)
+        window.speechSynthesis.speak(ssu)
       }
 
       iosTrigger.addEventListener('click', customSpeak)
@@ -33,7 +33,7 @@ export const speak = (text: string) => {
       ssu.onend = () => {
         resolve()
       }
-      speechSynthesis.speak(ssu)
+      window.speechSynthesis.speak(ssu)
     }
   })
 }

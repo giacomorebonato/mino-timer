@@ -1,4 +1,16 @@
+import { mocked } from 'ts-jest/utils'
 import { createStore, TStore } from '../createStore'
+import { TimerWorker } from '../workers/timer-worker'
+
+jest.mock('comlink')
+jest.mock('../workers/getTimerWorker', () => ({
+  getTimerWorker: () => require('../workers/timer-worker').TimerWorker
+}))
+jest.mock('../workers/timer-worker', () => ({
+  TimerWorker: jest.fn(() => ({
+    runTimer: async () => {}
+  }))
+}))
 
 jest.mock('tone', () => ({
   start: jest.fn(),
@@ -10,8 +22,6 @@ jest.mock('tone', () => ({
     }
   }
 }))
-
-const Tone = require('tone')
 
 describe('createStore', () => {
   describe('changeName()', () => {
@@ -78,6 +88,51 @@ describe('createStore', () => {
         const store = createStore()
         store.startExercise()
         expect(store.idle).toBe(false)
+      })
+    })
+  })
+
+  describe('startExercise()', () => {
+    let store: TStore
+
+    describe('when no exercise is added', () => {
+      beforeAll(() => {
+        store = createStore()
+        mocked(TimerWorker).mockClear()
+        store.startExercise()
+      })
+
+      it('creates a new TimerWorker', () => {
+        expect(TimerWorker).toHaveBeenCalledTimes(0)
+      })
+
+      it('sets the current round', () => {
+        expect(store.current.round).toBeNull()
+      })
+
+      it('sets the current exercise', () => {
+        expect(store.current.exercise).toBeNull()
+      })
+    })
+
+    describe('when at least one exercise is added', () => {
+      beforeAll(() => {
+        store = createStore()
+        store.addExercise()
+        mocked(TimerWorker).mockClear()
+        store.startExercise()
+      })
+
+      it('creates a new TimerWorker', () => {
+        expect(TimerWorker).toHaveBeenCalledTimes(1)
+      })
+
+      it('sets the current round', () => {
+        expect(store.current.round).not.toBeNull()
+      })
+
+      it('sets the current exercise', () => {
+        expect(store.current.exercise).not.toBeNull()
       })
     })
   })

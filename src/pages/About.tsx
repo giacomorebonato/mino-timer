@@ -50,7 +50,7 @@ export const About: React.FC = () => {
       <iframe
         title='feedback'
         width='640px'
-        height='480px'
+        height='685px'
         src='https://forms.office.com/Pages/ResponsePage.aspx?id=DQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAAMAAK7RPMFUN0o5SVJORU1HQzIzUDFZTlUyNzlNUktZUC4u&embed=true'
         frameBorder='0'
         marginWidth={0}
