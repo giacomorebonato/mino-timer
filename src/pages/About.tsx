@@ -58,9 +58,7 @@ export const About: React.FC = () => {
         style={{
           border: 'none',
           margin: '20px auto',
-          maxWidth: '100%',
-          maxHeight: '100vh',
-          height: '490px'
+          maxWidth: '100%'
         }}
         allowFullScreen
       >
