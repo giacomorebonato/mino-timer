@@ -102,15 +102,15 @@ describe('createStore', () => {
         store.startExercise()
       })
 
-      it('creates a new TimerWorker', () => {
+      it('does not create a new TimerWorker', () => {
         expect(TimerWorker).toHaveBeenCalledTimes(0)
       })
 
-      it('sets the current round', () => {
+      it('does not set the current round', () => {
         expect(store.current.round).toBeNull()
       })
 
-      it('sets the current exercise', () => {
+      it('does not set the current exercise', () => {
         expect(store.current.exercise).toBeNull()
       })
     })

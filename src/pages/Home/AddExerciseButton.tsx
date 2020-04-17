@@ -3,6 +3,12 @@ import NoSleep from 'nosleep.js'
 import React, { useCallback, useRef } from 'react'
 import * as Tone from 'tone'
 
+declare global {
+  interface Navigator {
+    wakeLock: any
+  }
+}
+
 export const AddExerciseButton = React.memo(() => {
   const isFirstClick = useRef(true)
   const handleClick = useCallback(() => {
@@ -12,10 +18,16 @@ export const AddExerciseButton = React.memo(() => {
     // * speech synthesis
     // * screen awake
     Tone.start()
-    const ssu = new SpeechSynthesisUtterance('')
-    const noSleep = new NoSleep()
-    noSleep.enable()
-    speechSynthesis.speak(ssu)
+
+    if (window.navigator.wakeLock) {
+      const noSleep = new NoSleep()
+      noSleep.enable()
+    }
+
+    if (window.speechSynthesis) {
+      const ssu = new window.SpeechSynthesisUtterance('')
+      window.speechSynthesis.speak(ssu)
+    }
 
     isFirstClick.current = false
   }, [])
