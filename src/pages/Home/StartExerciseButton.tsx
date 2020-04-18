@@ -1,6 +1,7 @@
 import { Button } from '@chakra-ui/core'
 import NoSleep from 'nosleep.js'
 import React, { useCallback, useRef } from 'react'
+import { FaPlay } from 'react-icons/fa'
 import * as Tone from 'tone'
 
 interface StartExerciseButtonProps {
@@ -38,6 +39,7 @@ export const StartExerciseButton: React.FC<StartExerciseButtonProps> = React.mem
       <Button
         isDisabled={isDisabled}
         flex='1'
+        leftIcon={FaPlay}
         type='button'
         variantColor='teal'
         onClick={(e) => handleClick(e)}

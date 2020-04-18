@@ -28,7 +28,7 @@ export const Home: React.FC = () => {
           <ExerciseChoice />
           <ExerciseTimeChoice />
           <RecoveryTimeChoice />
-          <RoundChoice />
+          {store.rounds.size > 0 && <RoundChoice />}
           <AddExerciseButton />
         </form>
       </Box>

@@ -65,6 +65,9 @@ export const createStore = () => {
         isRecovery: false
       }
     },
+    updateCache() {
+      localStorage.setItem('rounds', JSON.stringify(this.rounds))
+    },
     async stopExercise() {
       this.idle = false
 
@@ -117,6 +120,8 @@ export const createStore = () => {
           .exercises.push(this.newExercise)
       }
 
+      this.updateCache()
+
       this.newExercise = {
         ...this.newExercise,
         id: this.newExercise.id + 1
@@ -149,9 +154,15 @@ export const createStore = () => {
     removeExercise(roundId: number, exerciseId: number) {
       const round = this.rounds.get(roundId)
 
-      if (!round) return
+      if (round) {
+        round.exercises = round.exercises.filter((e) => e.id !== exerciseId)
 
-      round.exercises = round.exercises.filter((e) => e.id !== exerciseId)
+        if (!round.exercises.length) {
+          this.rounds.delete(round.id)
+        }
+
+        this.updateCache()
+      }
     },
     nextExercise() {
       if (!this.current.round) {
