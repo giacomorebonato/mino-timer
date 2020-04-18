@@ -22,5 +22,3 @@ export class TimerWorker {
     }, 1000)
   }
 }
-
-// export type TimerWorkerType = typeof TimerWorker
