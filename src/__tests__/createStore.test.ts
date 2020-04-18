@@ -24,27 +24,30 @@ jest.mock('tone', () => ({
 }))
 
 describe('createStore', () => {
-  describe('changeName()', () => {
-    it('changes name of the new exercise', () => {
-      const store = createStore()
-      store.changeName('test')
-      expect(store.newExercise.name).toBe('test')
-    })
-  })
-  describe('changeExerciseTime()', () => {
+  describe('new experience', () => {
     let store: TStore
     beforeAll(() => {
       store = createStore()
       store.changeExerciseTime(20)
     })
-    it('changes the time of the new exercise', () => {
-      expect(store.newExercise.exerciseTime).toBe(20)
-    })
 
-    it('changes the seconds left', () => {
-      expect(store.newExercise.secondsLeft).toBe(20)
+    describe('changeName()', () => {
+      it('changes name of the new exercise', () => {
+        store.changeName('test')
+        expect(store.newExercise.name).toBe('test')
+      })
+    })
+    describe('changeExerciseTime()', () => {
+      it('changes the time of the new exercise', () => {
+        expect(store.newExercise.exerciseTime).toBe(20)
+      })
+
+      it('changes the seconds left', () => {
+        expect(store.newExercise.secondsLeft).toBe(20)
+      })
     })
   })
+
   it('returns an object', () => {
     const store = createStore()
     expect(typeof store).toBe('object')
@@ -74,20 +77,25 @@ describe('createStore', () => {
   })
 
   describe('startTimer()', () => {
-    describe('when exercises are created', () => {
-      it('sets idle to true', () => {
-        const store = createStore()
-        store.addExercise()
-        store.startExercise()
-        expect(store.idle).toBe(true)
-      })
+    let store: TStore
+
+    beforeAll(() => {
+      store = createStore()
     })
 
     describe('when no exercises are created', () => {
       it("doesn't set idle to false", () => {
-        const store = createStore()
+        store.clearTimers()
         store.startExercise()
         expect(store.idle).toBe(false)
+      })
+    })
+
+    describe('when exercises are created', () => {
+      it('sets idle to true', () => {
+        store.addExercise()
+        store.startExercise()
+        expect(store.idle).toBe(true)
       })
     })
   })

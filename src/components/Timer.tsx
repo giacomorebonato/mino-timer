@@ -1,22 +1,19 @@
-import { Box, Flex, Text } from '@chakra-ui/core'
+import { Box, Button, Flex, Text } from '@chakra-ui/core'
 import React from 'react'
+import { FaRegTrashAlt } from 'react-icons/fa'
 
-type TimerProps = Omit<ExerciseData, 'id' | 'round' | 'start'>
+interface TimerProps extends ExerciseData {
+  onRemove: () => void
+}
 
 export const Timer: React.FC<TimerProps> = ({
   name,
   recoverySecondsLeft,
-  secondsLeft
+  secondsLeft,
+  onRemove
 }) => {
   return (
-    <Box
-      rounded='sm'
-      borderWidth='1px'
-      mt='1'
-      p='2'
-      // I need to highlight this
-      borderColor={true ? 'green.400' : 'gray.400'}
-    >
+    <Box rounded='sm' borderWidth='1px' mt='1' p='2' borderColor='gray.400'>
       <Flex flexDirection='row'>
         <Box flex='1'>
           <Text fontWeight='bold'>{name}</Text>
@@ -32,6 +29,18 @@ export const Timer: React.FC<TimerProps> = ({
         <Box flex='1'>
           <Text textAlign='right'>{recoverySecondsLeft}</Text>
         </Box>
+      </Flex>
+      <Flex>
+        <Button
+          onClick={() => {
+            onRemove()
+          }}
+          color='red'
+          size='sm'
+          leftIcon={FaRegTrashAlt}
+        >
+          Remove
+        </Button>
       </Flex>
     </Box>
   )

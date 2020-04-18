@@ -15,8 +15,10 @@ export const Home: React.FC = () => {
 
   return useObserver(() => (
     <Stack as='main' maxWidth='800px' mx='auto' p='4'>
-      <Text fontSize='2em'>Create your timer</Text>
-      <Box>
+      <Box hidden={store.idle}>
+        <Text as='h2' fontSize='2em'>
+          Create your timer
+        </Text>
         <form
           onSubmit={(e) => {
             e.preventDefault()
@@ -29,16 +31,16 @@ export const Home: React.FC = () => {
           <RoundChoice />
           <AddExerciseButton />
         </form>
-        <Box mt='2'>
-          {[...store.rounds.keys()].map((roundId) => (
-            <RoundBox
-              key={`round-${roundId}`}
-              round={store.rounds.get(roundId)!}
-            />
-          ))}
-        </Box>
-        <TimerActions />
       </Box>
+      <Box mt='2'>
+        {[...store.rounds.keys()].map((roundId) => (
+          <RoundBox
+            key={`round-${roundId}`}
+            round={store.rounds.get(roundId)!}
+          />
+        ))}
+      </Box>
+      <TimerActions />
     </Stack>
   ))
 }

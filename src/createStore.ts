@@ -18,10 +18,22 @@ export const createStore = () => {
   const synth = new Tone.Synth().toMaster()
   const DEFAULT_EXERCISE_TIME = 30
   const DEFAULT_RECOVERY_TIME = 15
+  const rounds = new Map<Number, RoundData>()
+  const savedRounds = localStorage.getItem('rounds')
+  let exerciseId = 1
+
+  if (savedRounds) {
+    const parsedRounds = JSON.parse(savedRounds)
+
+    Object.keys(parsedRounds).forEach((key) => {
+      rounds.set(parseInt(key), parsedRounds[key])
+      exerciseId += parsedRounds[key].exercises.length
+    })
+  }
 
   return {
     newExercise: {
-      id: 1,
+      id: exerciseId,
       name: 'Squats',
       recoveryTime: DEFAULT_RECOVERY_TIME,
       recoverySecondsLeft: DEFAULT_RECOVERY_TIME,
@@ -35,7 +47,7 @@ export const createStore = () => {
       round: null,
       isRecovery: false
     } as CurrentRound,
-    rounds: new Map<Number, RoundData>(),
+    rounds,
     idle: false,
     changeName(name: string) {
       this.newExercise.name = name
@@ -55,6 +67,10 @@ export const createStore = () => {
     },
     async stopExercise() {
       this.idle = false
+
+      if (this.current.exercise) {
+        this.current.exercise.secondsLeft = this.current.exercise.exerciseTime
+      }
 
       if (this.isProxyReleased) return
 
@@ -130,6 +146,13 @@ export const createStore = () => {
       })
     },
     timeWorker: (null as unknown) as Remote<TimerWorker>,
+    removeExercise(roundId: number, exerciseId: number) {
+      const round = this.rounds.get(roundId)
+
+      if (!round) return
+
+      round.exercises = round.exercises.filter((e) => e.id !== exerciseId)
+    },
     nextExercise() {
       if (!this.current.round) {
         throw Error('Undefined current round.')

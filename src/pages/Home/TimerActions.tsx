@@ -2,6 +2,7 @@ import { Box, Button, Flex } from '@chakra-ui/core'
 import { useObserver } from 'mobx-react-lite'
 import React from 'react'
 import { useStore } from '../../hooks/useStore'
+import { StartExerciseButton } from './StartExerciseButton'
 
 export const TimerActions = () => {
   const store = useStore()
@@ -10,15 +11,13 @@ export const TimerActions = () => {
     store.rounds.size ? (
       <Box mt='2'>
         <Flex>
-          <Button
+          <StartExerciseButton
             isDisabled={store.idle}
-            flex='1'
-            type='button'
-            variantColor='teal'
-            onClick={() => store.startExercise()}
-          >
-            Start
-          </Button>
+            onClick={() => {
+              store.startExercise()
+            }}
+          />
+
           <Button
             flex='1'
             type='button'
