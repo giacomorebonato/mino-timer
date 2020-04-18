@@ -1,11 +1,8 @@
-import { wrap } from 'comlink'
-import { TimerWorkerType } from './timer-worker'
+// eslint-disable-next-line import/no-webpack-loader-syntax
+import MyWorker from 'comlink-loader!./timer-worker'
 
 export const getTimerWorker = () => {
-  const worker = new Worker('./timer-worker', {
-    name: 'timer-worker',
-    type: 'module'
-  })
+  const inst = new MyWorker()
 
-  return wrap<TimerWorkerType>(worker)
+  return inst.TimerWorker
 }

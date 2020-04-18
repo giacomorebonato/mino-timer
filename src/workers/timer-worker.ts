@@ -1,4 +1,3 @@
-import { expose } from 'comlink'
 import debug from 'debug'
 
 const log = debug('time-worker')
@@ -24,6 +23,4 @@ export class TimerWorker {
   }
 }
 
-export type TimerWorkerType = typeof TimerWorker
-
-expose(TimerWorker)
+// export type TimerWorkerType = typeof TimerWorker
