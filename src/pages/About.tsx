@@ -55,10 +55,12 @@ export const About: React.FC = () => {
         frameBorder='0'
         marginWidth={0}
         marginHeight={0}
+        scrolling='no'
         style={{
           border: 'none',
           margin: '20px auto',
-          maxWidth: '100%'
+          maxWidth: '100%',
+          overflow: 'hidden'
         }}
         allowFullScreen
       >
