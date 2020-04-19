@@ -15,7 +15,7 @@ export const Home: React.FC = () => {
 
   return useObserver(() => (
     <Stack as='main' maxWidth='800px' mx='auto' p='4'>
-      <Box hidden={store.idle}>
+      <Box>
         <Text as='h2' fontSize='2em'>
           Create your timer
         </Text>
