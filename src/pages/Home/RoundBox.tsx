@@ -16,7 +16,11 @@ export const RoundBox: React.FC<RoundBoxProps> = ({ round }) => {
       <Text>Round {round.id}</Text>
       {round.exercises.map((exercise) => (
         <Timer
+          idle={store.idle}
           key={`${round.id}-round-${exercise.id}`}
+          move={(direction: 'DOWN' | 'UP') => {
+            store.moveExercise(round.id, exercise.id, direction)
+          }}
           onRemove={() => {
             store.removeExercise(round.id, exercise.id)
           }}

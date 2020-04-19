@@ -1,12 +1,16 @@
-import { Box, Button, Flex, Text } from '@chakra-ui/core'
+import { Box, Button, ButtonGroup, Flex, Text } from '@chakra-ui/core'
 import React from 'react'
-import { FaRegTrashAlt } from 'react-icons/fa'
+import { FaAngleDown, FaAngleUp, FaRegTrashAlt } from 'react-icons/fa'
 
 interface TimerProps extends ExerciseData {
+  idle: boolean
+  move: (direction: 'UP' | 'DOWN') => void
   onRemove: () => void
 }
 
 export const Timer: React.FC<TimerProps> = ({
+  idle,
+  move,
   name,
   recoverySecondsLeft,
   secondsLeft,
@@ -30,18 +34,39 @@ export const Timer: React.FC<TimerProps> = ({
           <Text textAlign='right'>{recoverySecondsLeft}</Text>
         </Box>
       </Flex>
-      <Flex>
-        <Button
-          onClick={() => {
-            onRemove()
-          }}
-          color='red'
-          size='sm'
-          leftIcon={FaRegTrashAlt}
-        >
-          Remove
-        </Button>
-      </Flex>
+      {!idle && (
+        <Flex mt='2'>
+          <ButtonGroup spacing={1}>
+            <Button
+              onClick={() => {
+                onRemove()
+              }}
+              size='sm'
+              leftIcon={FaRegTrashAlt}
+            >
+              Remove
+            </Button>
+            <Button
+              leftIcon={FaAngleUp}
+              onClick={() => {
+                move('UP')
+              }}
+              size='sm'
+            >
+              Move Up
+            </Button>
+            <Button
+              onClick={() => {
+                move('DOWN')
+              }}
+              leftIcon={FaAngleDown}
+              size='sm'
+            >
+              Move down
+            </Button>
+          </ButtonGroup>
+        </Flex>
+      )}
     </Box>
   )
 }

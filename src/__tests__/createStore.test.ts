@@ -48,6 +48,32 @@ describe('createStore', () => {
     })
   })
 
+  describe('moveExercise()', () => {
+    let store: TStore
+
+    beforeAll(() => {
+      store = createStore()
+    })
+
+    it('moves an experience UP and DOWN', () => {
+      const id1 = store.addExercise()
+      const id2 = store.addExercise()
+      const id3 = store.addExercise()
+      const exercises = store.rounds.get(1)?.exercises
+
+      expect(exercises).not.toBeUndefined()
+      expect(exercises![0].id).toBe(id1)
+      expect(exercises![1].id).toBe(id2)
+      expect(exercises![2].id).toBe(id3)
+
+      store.moveExercise(1, id2, 'DOWN')
+
+      expect(exercises![0].id).toBe(id1)
+      expect(exercises![1].id).toBe(id3)
+      expect(exercises![2].id).toBe(id2)
+    })
+  })
+
   it('returns an object', () => {
     const store = createStore()
     expect(typeof store).toBe('object')

@@ -1,3 +1,4 @@
+import arrayMove from 'array-move'
 import { proxy, releaseProxy, Remote } from 'comlink'
 import debug from 'debug'
 import * as Tone from 'tone'
@@ -121,11 +122,14 @@ export const createStore = () => {
       }
 
       this.updateCache()
+      const addedId = this.newExercise.id
 
       this.newExercise = {
         ...this.newExercise,
         id: this.newExercise.id + 1
       }
+
+      return addedId
     },
     updateSeconds(exercise: ExerciseData, isRecovery: boolean) {
       return proxy((secondsLeft: number) => {
@@ -154,15 +158,40 @@ export const createStore = () => {
     removeExercise(roundId: number, exerciseId: number) {
       const round = this.rounds.get(roundId)
 
-      if (round) {
-        round.exercises = round.exercises.filter((e) => e.id !== exerciseId)
+      if (!round) return
+      round.exercises = round.exercises.filter((e) => e.id !== exerciseId)
 
-        if (!round.exercises.length) {
-          this.rounds.delete(round.id)
-        }
-
-        this.updateCache()
+      if (!round.exercises.length) {
+        this.rounds.delete(round.id)
       }
+
+      this.updateCache()
+    },
+    moveExercise(
+      roundId: number,
+      exerciseId: number,
+      direction: 'UP' | 'DOWN'
+    ) {
+      log('moveExercise')
+      const round = this.rounds.get(roundId)
+
+      if (!round) return
+
+      const index = round.exercises.findIndex((item) => item.id === exerciseId)
+
+      if (index === 0 && direction === 'UP') {
+        return
+      }
+
+      if (index === round.exercises.length - 1 && direction === 'DOWN') {
+        return
+      }
+
+      arrayMove.mutate(
+        round.exercises,
+        index,
+        direction === 'UP' ? index - 1 : index + 1
+      )
     },
     nextExercise() {
       if (!this.current.round) {
