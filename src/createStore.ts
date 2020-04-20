@@ -187,11 +187,20 @@ export const createStore = () => {
         return
       }
 
+      this.clearCurrent()
+
+      log('Mutating array')
+
       arrayMove.mutate(
         round.exercises,
         index,
         direction === 'UP' ? index - 1 : index + 1
       )
+    },
+    clearCurrent() {
+      this.current.round = null
+      this.current.isRecovery = false
+      this.current.exercise = null
     },
     nextExercise() {
       if (!this.current.round) {
