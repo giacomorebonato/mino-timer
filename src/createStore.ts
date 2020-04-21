@@ -28,7 +28,11 @@ export const createStore = () => {
 
     Object.keys(parsedRounds).forEach((key) => {
       rounds.set(parseInt(key), parsedRounds[key])
-      exerciseId += parsedRounds[key].exercises.length
+      exerciseId += parsedRounds[key].exercises.reduce(
+        (acc: number, value: ExerciseData) =>
+          value.id > acc ? value.id + 1 : acc,
+        exerciseId
+      )
     })
   }
 
