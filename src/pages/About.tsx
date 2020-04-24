@@ -47,25 +47,6 @@ export const About: React.FC = () => {
         . This will ensure that the screen will stay awake while the timer is
         running and you'll hear the audio notifications.
       </Text>
-      <iframe
-        title='feedback'
-        width='640px'
-        height='685px'
-        src='https://forms.office.com/Pages/ResponsePage.aspx?id=DQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAAMAAK7RPMFUN0o5SVJORU1HQzIzUDFZTlUyNzlNUktZUC4u&embed=true'
-        frameBorder='0'
-        marginWidth={0}
-        marginHeight={0}
-        scrolling='no'
-        style={{
-          border: 'none',
-          margin: '20px auto',
-          maxWidth: '100%',
-          overflow: 'hidden'
-        }}
-        allowFullScreen
-      >
-        {' '}
-      </iframe>
     </Stack>
   )
 }

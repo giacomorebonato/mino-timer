@@ -1,8 +1,15 @@
-import { Box, Flex, Heading } from '@chakra-ui/core'
+import { Box, Flex, Heading, Link as ChakraLink } from '@chakra-ui/core'
 import React from 'react'
 import { Link, NavLink } from 'react-router-dom'
 
+declare module '@chakra-ui/core' {
+  interface ILink {
+    as: NavLink
+  }
+}
+
 export const Header: React.FC = (props) => {
+  const MyLink = ChakraLink as any
   return (
     <Flex
       as='nav'
@@ -19,9 +26,13 @@ export const Header: React.FC = (props) => {
           <Link to='/'>Mino Timer</Link>
         </Heading>
       </Flex>
-
       <Box display='flex' width='auto' alignItems='center' flexGrow={1}>
-        <NavLink to='/about'>About</NavLink>
+        <MyLink as={NavLink} to='/about'>
+          About
+        </MyLink>
+        <MyLink as={NavLink} to='/feedback' ml='4'>
+          Feedback
+        </MyLink>
       </Box>
     </Flex>
   )

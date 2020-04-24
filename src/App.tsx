@@ -3,7 +3,7 @@ import React from 'react'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import { Header } from './components/Header'
 import { StoreProvider } from './hooks/useStore'
-import { About, Home } from './pages'
+import { About, Feedback, Home } from './pages'
 import { customTheme } from './theme'
 
 const App: React.FC = () => {
@@ -16,6 +16,9 @@ const App: React.FC = () => {
           <Switch>
             <Route path='/about'>
               <About />
+            </Route>
+            <Route path='/feedback'>
+              <Feedback />
             </Route>
             <Route path='/'>
               <Home />
