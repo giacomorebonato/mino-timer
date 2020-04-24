@@ -14,6 +14,16 @@ export const About: React.FC = () => {
       <Text>
         Mino-Timer is a timer for your home workout. It's free, without ads and
         it'll always stay like this.
+        <br />
+        <Link
+          color='teal.600'
+          href='https://github.com/giacomorebonato/mino-timer'
+          rel='noopener noreferrer'
+          target='_blank'
+        >
+          It is open source
+        </Link>
+        .
       </Text>
 
       <Text as='h2' fontSize='lg' fontWeight='bold'>
