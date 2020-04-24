@@ -1,7 +1,7 @@
 import { RootStore } from '../index'
 jest.mock('comlink')
 jest.mock('../../workers/getTimerWorker', () => ({
-  getTimerWorker: () => require('../workers/timer-worker').TimerWorker
+  getTimerWorker: () => require('../../workers/timer-worker').TimerWorker
 }))
 jest.mock('../../workers/timer-worker', () => ({
   TimerWorker: jest.fn(() => ({
