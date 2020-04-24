@@ -8,7 +8,7 @@ export class TimerWorker {
   clearInterval() {
     clearInterval(this.intervalId)
   }
-  async runTimer(seconds: number, onSecondsUpdate: TimerCallback) {
+  runTimer(seconds: number, onSecondsUpdate: TimerCallback) {
     log('runTimer start')
 
     this.intervalId = setInterval(async () => {

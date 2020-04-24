@@ -11,7 +11,7 @@ import { RoundChoice } from './RoundChoice'
 import { TimerActions } from './TimerActions'
 
 export const Home: React.FC = () => {
-  const store = useStore()
+  const { round } = useStore()
 
   return useObserver(() => (
     <Stack as='main' maxWidth='800px' mx='auto' p='4'>
@@ -22,25 +22,26 @@ export const Home: React.FC = () => {
         <form
           onSubmit={(e) => {
             e.preventDefault()
-            store.addExercise()
+            round.addExercise()
           }}
         >
           <ExerciseChoice />
           <ExerciseTimeChoice />
           <RecoveryTimeChoice />
-          {store.rounds.size > 0 && <RoundChoice />}
+          {round.rounds.size > 0 && <RoundChoice />}
           <AddExerciseButton />
         </form>
       </Box>
       <Box mt='2'>
-        {[...store.rounds.keys()].map((roundId) => (
+        {[...round.rounds.keys()].map((roundId) => (
           <RoundBox
             key={`round-${roundId}`}
-            round={store.rounds.get(roundId)!}
+            round={round.rounds.get(roundId)!}
           />
         ))}
       </Box>
       <TimerActions />
+      <Box></Box>
     </Stack>
   ))
 }

@@ -5,20 +5,20 @@ import { TimeSelect } from '../../components'
 import { useStore } from '../../hooks/useStore'
 
 export const RecoveryTimeChoice = () => {
-  const store = useStore()
+  const { exercise } = useStore()
 
   return useObserver(() => (
     <FormControl mb='2'>
       <FormLabel htmlFor='recovery-time'>
-        Recovery time: {store.newExercise.recoveryTime} seconds
+        Recovery time: {exercise.newExercise.recoveryTime} seconds
       </FormLabel>
       <TimeSelect
         id='recovery-time'
-        value={store.newExercise.recoveryTime}
+        value={exercise.newExercise.recoveryTime}
         onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
           const parsedSeconds = parseInt(e.target.value)
 
-          store.changeRecoveryTime(isNaN(parsedSeconds) ? 0 : parsedSeconds)
+          exercise.changeRecoveryTime(isNaN(parsedSeconds) ? 0 : parsedSeconds)
         }}
       />
     </FormControl>

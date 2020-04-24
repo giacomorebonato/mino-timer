@@ -7,28 +7,28 @@ import { useStore } from '../../hooks/useStore'
 import { StartExerciseButton } from './StartExerciseButton'
 
 export const TimerActions = () => {
-  const store = useStore()
+  const { round, timer } = useStore()
 
   return useObserver(() =>
-    store.rounds.size ? (
+    round.rounds.size ? (
       <Box mt='2'>
         <Flex>
           <StartExerciseButton
-            isDisabled={store.idle}
+            isDisabled={timer.idle}
             onClick={() => {
-              store.startExercise()
+              timer.startExercise()
             }}
           />
 
           <Button
-            isDisabled={!store.idle}
+            isDisabled={!timer.idle}
             flex='1'
             leftIcon={FaPause}
             type='button'
             ml='1'
             mr='1'
             onClick={() => {
-              store.stopExercise()
+              timer.stopPerformance()
             }}
           >
             Pause
@@ -41,7 +41,7 @@ export const TimerActions = () => {
             leftIcon={MdCancel}
             flex='1'
             type='button'
-            onClick={() => store.clearTimers()}
+            onClick={() => timer.clearPerformance()}
           >
             Clear
           </Button>

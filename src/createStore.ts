@@ -1,24 +1,14 @@
-import arrayMove from 'array-move'
-import { proxy, releaseProxy, Remote } from 'comlink'
 import debug from 'debug'
 import * as Tone from 'tone'
-import { speak } from './lib'
 import { getTimerWorker } from './workers/getTimerWorker'
-import { TimerWorker } from './workers/timer-worker'
 
 const log = debug('createStore')
-
-type CurrentRound = {
-  round: RoundData | null
-  exercise: ExerciseData | null
-  isRecovery: boolean
-}
 
 export const createStore = () => {
   const StoreTimerWorker = getTimerWorker()
   const synth = new Tone.Synth().toMaster()
-  const DEFAULT_EXERCISE_TIME = 30
-  const DEFAULT_RECOVERY_TIME = 15
+  // const DEFAULT_EXERCISE_TIME = 30
+  // const DEFAULT_RECOVERY_TIME = 15
   const rounds = new Map<Number, RoundData>()
   const savedRounds = localStorage.getItem('rounds')
   let exerciseId = 1
@@ -37,15 +27,15 @@ export const createStore = () => {
   }
 
   return {
-    newExercise: {
-      id: exerciseId,
-      name: 'Squats',
-      recoveryTime: DEFAULT_RECOVERY_TIME,
-      recoverySecondsLeft: DEFAULT_RECOVERY_TIME,
-      exerciseTime: DEFAULT_EXERCISE_TIME,
-      secondsLeft: DEFAULT_EXERCISE_TIME,
-      round: 1 as RoundId
-    } as ExerciseData,
+    // newExercise: {
+    //   id: exerciseId,
+    //   name: 'Squats',
+    //   recoveryTime: DEFAULT_RECOVERY_TIME,
+    //   recoverySecondsLeft: DEFAULT_RECOVERY_TIME,
+    //   exerciseTime: DEFAULT_EXERCISE_TIME,
+    //   secondsLeft: DEFAULT_EXERCISE_TIME,
+    //   round: 1 as RoundId
+    // } as ExerciseData,
     isProxyReleased: false,
     current: {
       exercise: null,
@@ -53,254 +43,250 @@ export const createStore = () => {
       isRecovery: false
     } as CurrentRound,
     rounds,
-    idle: false,
-    changeName(name: string) {
-      this.newExercise.name = name
-    },
-    changeDestinationRound(round: RoundId) {
-      this.newExercise.round = round
-    },
-    clearTimers() {
-      this.rounds.clear()
-      this.idle = false
-      this.rounds = new Map()
-      this.current = {
-        round: (null as unknown) as RoundData,
-        exercise: (null as unknown) as ExerciseData,
-        isRecovery: false
-      }
-    },
-    updateCache() {
-      localStorage.setItem('rounds', JSON.stringify(this.rounds))
-    },
-    async stopExercise() {
-      this.idle = false
+    idle: false
 
-      if (this.current.exercise) {
-        this.current.exercise.secondsLeft = this.current.exercise.exerciseTime
-      }
+    // changeName(name: string) {
+    //   this.newExercise.name = name
+    // },
+    // changeDestinationRound(round: RoundId) {
+    //   this.newExercise.round = round
+    // },
+    // clearTimers() {
+    //   this.rounds.clear()
+    //   this.idle = false
+    //   this.rounds = new Map()
+    //   this.current = {
+    //     round: (null as unknown) as RoundData,
+    //     exercise: (null as unknown) as ExerciseData,
+    //     isRecovery: false
+    //   }
+    // },
+    // updateCache() {
+    //   localStorage.setItem('rounds', JSON.stringify(this.rounds))
+    // },
+    // async stopExercise() {
+    //   this.idle = false
 
-      if (this.isProxyReleased) return
+    //   if (this.current.exercise) {
+    //     this.current.exercise.secondsLeft = this.current.exercise.exerciseTime
+    //   }
 
-      if (this.timeWorker) {
-        this.isProxyReleased = true
+    //   if (this.isProxyReleased) return
 
-        try {
-          await this.timeWorker.clearInterval()
-          this.timeWorker[releaseProxy]()
-        } catch (error) {
-          log('Proxy is already released.')
-        }
-      }
-    },
-    changeExerciseTime(seconds: number) {
-      this.newExercise.secondsLeft = seconds
-      this.newExercise.exerciseTime = seconds
-    },
-    changeRecoveryTime(seconds: number) {
-      this.newExercise.recoveryTime = seconds
-      this.newExercise.recoverySecondsLeft = seconds
-    },
-    resetTimer(timer: ExerciseData) {
-      this.stopExercise()
-      timer.secondsLeft = timer.exerciseTime
-      timer.recoverySecondsLeft = timer.recoveryTime
-    },
-    addExercise() {
-      if (!this.rounds.has(this.newExercise.round)) {
-        log(`Creating round ${this.newExercise.round}`)
-        this.rounds.set(this.newExercise.round, {
-          id: this.newExercise.round,
-          exercises: [this.newExercise],
-          rest: {
-            recoveryTime: DEFAULT_RECOVERY_TIME,
-            secondsLeft: DEFAULT_RECOVERY_TIME
-          },
-          repetitions: 1
-        })
-      } else {
-        log(`Adding exercise to round ${this.newExercise.round}`)
-        this.rounds
-          .get(this.newExercise.round)!
-          .exercises.push(this.newExercise)
-      }
+    //   if (this.timeWorker) {
+    //     this.isProxyReleased = true
 
-      this.updateCache()
-      const addedId = this.newExercise.id
+    //     try {
+    //       await this.timeWorker.clearInterval()
+    //       this.timeWorker[releaseProxy]()
+    //     } catch (error) {
+    //       log('Proxy is already released.')
+    //     }
+    //   }
+    // },
+    // changeExerciseTime(seconds: number) {
+    //   this.newExercise.secondsLeft = seconds
+    //   this.newExercise.exerciseTime = seconds
+    // },
+    // changeRecoveryTime(seconds: number) {
+    //   this.newExercise.recoveryTime = seconds
+    //   this.newExercise.recoverySecondsLeft = seconds
+    // },
+    // addExercise() {
+    //   if (!this.rounds.has(this.newExercise.round)) {
+    //     log(`Creating round ${this.newExercise.round}`)
+    //     this.rounds.set(this.newExercise.round, {
+    //       id: this.newExercise.round,
+    //       exercises: [this.newExercise],
+    //       rest: {
+    //         recoveryTime: DEFAULT_RECOVERY_TIME,
+    //         secondsLeft: DEFAULT_RECOVERY_TIME
+    //       },
+    //       repetitions: 1
+    //     })
+    //   } else {
+    //     log(`Adding exercise to round ${this.newExercise.round}`)
+    //     this.rounds
+    //       .get(this.newExercise.round)!
+    //       .exercises.push(this.newExercise)
+    //   }
 
-      this.newExercise = {
-        ...this.newExercise,
-        id: this.newExercise.id + 1
-      }
+    //   this.updateCache()
+    //   const addedId = this.newExercise.id
 
-      return addedId
-    },
-    updateSeconds(exercise: ExerciseData, isRecovery: boolean) {
-      return proxy((secondsLeft: number) => {
-        log(`Seconds left ${secondsLeft}`)
-        log(`Recovery: ${isRecovery}`)
+    //   this.newExercise = {
+    //     ...this.newExercise,
+    //     id: this.newExercise.id + 1
+    //   }
 
-        exercise[
-          isRecovery ? 'recoverySecondsLeft' : 'secondsLeft'
-        ] = secondsLeft
+    //   return addedId
+    // },
+    // updateSeconds(exercise: ExerciseData, isRecovery: boolean) {
+    //   return proxy((secondsLeft: number) => {
+    //     log(`Seconds left ${secondsLeft}`)
+    //     log(`Recovery: ${isRecovery}`)
 
-        if (secondsLeft > 0 && secondsLeft < 4) {
-          synth.triggerAttackRelease('C4', '0.2')
-        }
+    //     exercise[
+    //       isRecovery ? 'recoverySecondsLeft' : 'secondsLeft'
+    //     ] = secondsLeft
 
-        if (secondsLeft === 0) {
-          synth.triggerAttackRelease('G4', '0.4')
+    //     if (secondsLeft > 0 && secondsLeft < 4) {
+    //       synth.triggerAttackRelease('C4', '0.2')
+    //     }
 
-          setTimeout(() => {
-            exercise.secondsLeft = exercise.exerciseTime
-            this.nextExercise()
-          }, 1000)
-        }
-      })
-    },
-    timeWorker: (null as unknown) as Remote<TimerWorker>,
-    removeExercise(roundId: number, exerciseId: number) {
-      const round = this.rounds.get(roundId)
+    //     if (secondsLeft === 0) {
+    //       synth.triggerAttackRelease('G4', '0.4')
 
-      if (!round) return
-      round.exercises = round.exercises.filter((e) => e.id !== exerciseId)
+    //       setTimeout(() => {
+    //         exercise.secondsLeft = exercise.exerciseTime
+    //         this.nextExercise()
+    //       }, 1000)
+    //     }
+    //   })
+    // },
+    // timeWorker: (null as unknown) as Remote<TimerWorker>
+    // removeExercise(roundId: number, exerciseId: number) {
+    //   const round = this.rounds.get(roundId)
 
-      if (!round.exercises.length) {
-        this.rounds.delete(round.id)
-      }
+    //   if (!round) return
+    //   round.exercises = round.exercises.filter((e) => e.id !== exerciseId)
 
-      this.updateCache()
-    },
-    moveExercise(
-      roundId: number,
-      exerciseId: number,
-      direction: 'UP' | 'DOWN'
-    ) {
-      log('moveExercise')
-      const round = this.rounds.get(roundId)
+    //   if (!round.exercises.length) {
+    //     this.rounds.delete(round.id)
+    //   }
 
-      if (!round) return
+    //   this.updateCache()
+    // },
+    // moveExercise(
+    //   roundId: number,
+    //   exerciseId: number,
+    //   direction: 'UP' | 'DOWN'
+    // ) {
+    //   log('moveExercise')
+    //   const round = this.rounds.get(roundId)
 
-      const index = round.exercises.findIndex((item) => item.id === exerciseId)
+    //   if (!round) return
 
-      if (index === 0 && direction === 'UP') {
-        return
-      }
+    //   const index = round.exercises.findIndex((item) => item.id === exerciseId)
 
-      if (index === round.exercises.length - 1 && direction === 'DOWN') {
-        return
-      }
+    //   if (index === 0 && direction === 'UP') {
+    //     return
+    //   }
 
-      this.clearCurrent()
+    //   if (index === round.exercises.length - 1 && direction === 'DOWN') {
+    //     return
+    //   }
 
-      log('Mutating array')
+    //   this.clearCurrent()
 
-      arrayMove.mutate(
-        round.exercises,
-        index,
-        direction === 'UP' ? index - 1 : index + 1
-      )
-    },
-    clearCurrent() {
-      this.current.round = null
-      this.current.isRecovery = false
-      this.current.exercise = null
-    },
-    nextExercise() {
-      if (!this.current.round) {
-        throw Error('Undefined current round.')
-      }
-      if (!this.current.exercise) {
-        throw Error('Undefined current exercise.')
-      }
+    //   log('Mutating array')
 
-      if (this.current.isRecovery) {
-        const index = this.current.round.exercises.findIndex(
-          (item) => item === this.current.exercise
-        )
+    //   arrayMove.mutate(
+    //     round.exercises,
+    //     index,
+    //     direction === 'UP' ? index - 1 : index + 1
+    //   )
+    // },
+    // clearCurrent() {
+    //   this.current.round = null
+    //   this.current.isRecovery = false
+    //   this.current.exercise = null
+    // },
+    // nextExercise() {
+    //   if (!this.current.round) {
+    //     throw Error('Undefined current round.')
+    //   }
+    //   if (!this.current.exercise) {
+    //     throw Error('Undefined current exercise.')
+    //   }
 
-        if (index < this.current.round.exercises.length - 1) {
-          this.current.exercise = this.current.round.exercises[index + 1]
-        } else {
-          if (this.rounds.has(this.current.round.id + 1)) {
-            const nextRound = this.rounds.get(this.current.round.id + 1)!
-            this.current.round = nextRound
-            this.current.exercise = nextRound.exercises[0]
-          } else {
-            speak('Congratulations! You completed your workout.')
-            this.current.isRecovery = false
-            this.current.exercise = null
-            this.current.round = null
-            this.idle = false
-            return
-          }
-        }
-      }
+    //   if (this.current.isRecovery) {
+    //     const index = this.current.round.exercises.findIndex(
+    //       (item) => item === this.current.exercise
+    //     )
 
-      this.current.isRecovery = !this.current.isRecovery
+    //     if (index < this.current.round.exercises.length - 1) {
+    //       this.current.exercise = this.current.round.exercises[index + 1]
+    //     } else {
+    //       if (this.rounds.has(this.current.round.id + 1)) {
+    //         const nextRound = this.rounds.get(this.current.round.id + 1)!
+    //         this.current.round = nextRound
+    //         this.current.exercise = nextRound.exercises[0]
+    //       } else {
+    //         speak('Congratulations! You completed your workout.')
+    //         this.current.isRecovery = false
+    //         this.current.exercise = null
+    //         this.current.round = null
+    //         this.idle = false
+    //         return
+    //       }
+    //     }
+    //   }
 
-      this.startExercise()
-    },
-    async playSoundsBeforeStart() {
-      return new Promise(async (resolve) => {
-        await this.timeWorker.runTimer(
-          5,
-          proxy((beginningSeconds: number) => {
-            if (beginningSeconds > 1) {
-              synth.triggerAttackRelease('C4', '0.2')
-            } else if (beginningSeconds === 1) {
-              synth.triggerAttackRelease('G4', '0.4')
-            } else {
-              resolve()
-            }
-          })
-        )
-      })
-    },
-    async startExercise() {
-      if (!this.rounds.size) return
-      this.idle = true
-      this.isProxyReleased = false
+    //   this.current.isRecovery = !this.current.isRecovery
 
-      if (!this.current.round) {
-        const firstRound = this.rounds.get(1)!
-        this.current.round = firstRound
-        this.current.exercise = firstRound.exercises[0]
-      }
+    //   this.startExercise()
+    // },
+    // async playSoundsBeforeStart() {
+    //   return new Promise(async (resolve) => {
+    //     await this.timeWorker.runTimer(
+    //       5,
+    //       proxy((beginningSeconds: number) => {
+    //         if (beginningSeconds > 1) {
+    //           synth.triggerAttackRelease('C4', '0.2')
+    //         } else if (beginningSeconds === 1) {
+    //           synth.triggerAttackRelease('G4', '0.4')
+    //         } else {
+    //           resolve()
+    //         }
+    //       })
+    //     )
+    //   })
+    // },
+    // async startExercise() {
+    //   if (!this.rounds.size) return
+    //   this.idle = true
+    //   this.isProxyReleased = false
 
-      this.timeWorker = await new StoreTimerWorker()
+    //   if (!this.current.round) {
+    //     const firstRound = this.rounds.get(1)!
+    //     this.current.round = firstRound
+    //     this.current.exercise = firstRound.exercises[0]
+    //   }
 
-      log('Starting')
-      log(`Round: ${this.current.round}`)
-      log(`Exercise: ${this.current.exercise}`)
+    //   this.timeWorker = await new StoreTimerWorker()
 
-      if (!this.current.round) {
-        throw Error('Undefined current round.')
-      }
-      if (!this.current.exercise) {
-        throw Error('Undefined current exercise.')
-      }
+    //   log('Starting')
+    //   log(`Round: ${this.current.round}`)
+    //   log(`Exercise: ${this.current.exercise}`)
 
-      await speak(
-        this.current.isRecovery
-          ? `Rest for ${this.current.exercise.recoverySecondsLeft} seconds.`
-          : `Get ready for ${this.current.exercise.secondsLeft} seconds of ${this.current.exercise.name}.`
-      )
+    //   if (!this.current.round) {
+    //     throw Error('Undefined current round.')
+    //   }
+    //   if (!this.current.exercise) {
+    //     throw Error('Undefined current exercise.')
+    //   }
 
-      const updateSeconds = this.updateSeconds(
-        this.current.exercise,
-        this.current.isRecovery
-      )
+    //   await speak(
+    //     this.current.isRecovery
+    //       ? `Rest for ${this.current.exercise.recoverySecondsLeft} seconds.`
+    //       : `Get ready for ${this.current.exercise.secondsLeft} seconds of ${this.current.exercise.name}.`
+    //   )
 
-      if (!this.current.isRecovery) {
-        await this.playSoundsBeforeStart()
-      }
+    //   const updateSeconds = this.updateSeconds(
+    //     this.current.exercise,
+    //     this.current.isRecovery
+    //   )
 
-      await this.timeWorker.runTimer(
-        this.current.exercise.exerciseTime,
-        proxy((secondsLeft: number) => updateSeconds(secondsLeft))
-      )
-    }
+    //   if (!this.current.isRecovery) {
+    //     await this.playSoundsBeforeStart()
+    //   }
+
+    //   await this.timeWorker.runTimer(
+    //     this.current.exercise.exerciseTime,
+    //     proxy((secondsLeft: number) => updateSeconds(secondsLeft))
+    //   )
+    // }
   }
 }
 

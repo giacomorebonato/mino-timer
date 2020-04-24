@@ -13,11 +13,11 @@ export const RoundChoice = () => {
       <FormLabel htmlFor='destination-round'>Destination round</FormLabel>
       <Select
         id='destination-round'
-        value={store.newExercise.round}
+        value={store.exercise.newExercise.round}
         onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
           const destinationRound = parseInt(e.target.value) as RoundId
 
-          store.changeDestinationRound(destinationRound)
+          store.exercise.changeDestinationRound(destinationRound)
         }}
       >
         {rounds.map((round) => (

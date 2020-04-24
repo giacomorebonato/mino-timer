@@ -1,13 +1,14 @@
-import { useLocalStore } from 'mobx-react-lite'
 import React from 'react'
-import { createStore, TStore } from '../createStore'
+import { RootStore } from '../store'
 
-const storeContext = React.createContext<TStore | null>(null)
+const storeContext = React.createContext<RootStore | null>(null)
 
 export const StoreProvider: React.FC = ({ children }) => {
-  const store = useLocalStore(createStore)
+  const [rootStore] = React.useState(() => new RootStore())
 
-  return <storeContext.Provider value={store}>{children}</storeContext.Provider>
+  return (
+    <storeContext.Provider value={rootStore}>{children}</storeContext.Provider>
+  )
 }
 
 export const useStore = () => {

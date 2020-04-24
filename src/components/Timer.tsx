@@ -8,15 +8,8 @@ interface TimerProps extends ExerciseData {
   onRemove: () => void
 }
 
-export const Timer: React.FC<TimerProps> = ({
-  idle,
-  move,
-  name,
-  recoverySecondsLeft,
-  secondsLeft,
-  onRemove
-}) => {
-  return (
+export const Timer: React.FC<TimerProps> = React.memo(
+  ({ idle, move, name, recoverySecondsLeft, secondsLeft, onRemove }) => (
     <Box rounded='sm' borderWidth='1px' mt='1' p='2' borderColor='gray.400'>
       <Flex flexDirection='row'>
         <Box flex='1'>
@@ -69,4 +62,4 @@ export const Timer: React.FC<TimerProps> = ({
       )}
     </Box>
   )
-}
+)

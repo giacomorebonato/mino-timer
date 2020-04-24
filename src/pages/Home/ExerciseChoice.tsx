@@ -13,9 +13,9 @@ export const ExerciseChoice = () => {
       <ExerciseSelect
         id='exercise'
         onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-          store.changeName(e.target.value)
+          store.exercise.changeName(e.target.value)
         }}
-        value={store.newExercise.name}
+        value={store.exercise.newExercise.name}
       />
     </FormControl>
   ))
