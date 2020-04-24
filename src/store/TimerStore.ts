@@ -1,4 +1,5 @@
 import { proxy } from 'comlink'
+import { action, observable } from 'mobx'
 import * as Tone from 'tone'
 import { speak } from '../lib'
 import { getTimerWorker } from '../workers/getTimerWorker'
@@ -6,15 +7,18 @@ import { TimerWorker } from '../workers/timer-worker'
 import { BaseStore } from './BaseStore'
 
 export class TimerStore extends BaseStore {
+  @observable
   idle = false
-  synth?: Tone.Synth
+  synth = new Tone.Synth().toDestination()
   timerWorker?: TimerWorker
 
+  @action
   clearPerformance() {
     this.root.round.rounds = new Map()
     this.root.round.current.clear()
   }
 
+  @action
   async stopPerformance() {
     this.idle = false
     const currentRound = this.root.round.current
@@ -32,6 +36,7 @@ export class TimerStore extends BaseStore {
     }
   }
 
+  @action
   updateSeconds(exercise: ExerciseData, isRecovery: boolean) {
     return proxy((secondsLeft: number) => {
       this.log(`Seconds left ${secondsLeft}`)
@@ -40,11 +45,11 @@ export class TimerStore extends BaseStore {
       exercise[isRecovery ? 'recoverySecondsLeft' : 'secondsLeft'] = secondsLeft
 
       if (secondsLeft > 0 && secondsLeft < 4) {
-        this.synth!.triggerAttackRelease('C4', '0.2')
+        this.synth.triggerAttackRelease('C4', '0.2')
       }
 
       if (secondsLeft === 0) {
-        this.synth!.triggerAttackRelease('G4', '0.4')
+        this.synth.triggerAttackRelease('G4', '0.4')
 
         setTimeout(() => {
           exercise.secondsLeft = exercise.exerciseTime
@@ -54,7 +59,9 @@ export class TimerStore extends BaseStore {
     })
   }
 
+  @action
   nextExercise() {
+    this.log('nextExercise')
     const { current, rounds } = this.root.round
 
     if (!current.round) {
@@ -89,7 +96,7 @@ export class TimerStore extends BaseStore {
 
     current.isRecovery = !current.isRecovery
 
-    this.stopPerformance()
+    this.startExercise()
   }
 
   async playSoundsBeforeStart() {
@@ -109,6 +116,7 @@ export class TimerStore extends BaseStore {
     })
   }
 
+  @action
   async startExercise() {
     const { current, rounds } = this.root.round
 
@@ -126,8 +134,8 @@ export class TimerStore extends BaseStore {
     this.timerWorker = await new StoreTimerWorker()
 
     this.log('Starting')
-    this.log(`Round: ${current.round}`)
-    this.log(`Exercise: ${current.exercise}`)
+    this.log(`Round: ${current.round.id}`)
+    this.log(`Exercise: ${current.exercise!.name}`)
 
     if (!current.round) {
       throw Error('Undefined current round.')

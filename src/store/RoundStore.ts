@@ -1,9 +1,13 @@
 import arrayMove from 'array-move'
+import { action, computed, observable } from 'mobx'
 import { BaseStore } from './BaseStore'
 import type { RootStore } from './index'
 
 export class RoundStore extends BaseStore {
+  @observable
   rounds = new Map<Number, RoundData>()
+
+  @observable
   current = {
     clear() {
       this.round = null
@@ -15,11 +19,13 @@ export class RoundStore extends BaseStore {
     isRecovery: false
   } as CurrentRound
 
+  @computed
   get workoutLink() {
     const base64 = btoa(JSON.stringify(this.rounds))
     return `http://mino-timer.now.sh/workout/${base64}`
   }
 
+  @action
   addExercise() {
     const { newExercise } = this.root.exercise
 
@@ -50,6 +56,7 @@ export class RoundStore extends BaseStore {
     return addedId
   }
 
+  @action
   moveExercise(roundId: number, exerciseId: number, direction: 'UP' | 'DOWN') {
     this.log('moveExercise')
     const round = this.rounds.get(roundId)
@@ -76,6 +83,7 @@ export class RoundStore extends BaseStore {
     )
   }
 
+  @action
   removeExercise(roundId: number, exerciseId: number) {
     const round = this.rounds.get(roundId)
 
@@ -93,6 +101,7 @@ export class RoundStore extends BaseStore {
     localStorage.setItem('rounds', JSON.stringify(this.rounds))
   }
 
+  @computed
   get savedRounds(): { [key: string]: RoundData } | null {
     const savedRounds = localStorage.getItem('rounds')
 

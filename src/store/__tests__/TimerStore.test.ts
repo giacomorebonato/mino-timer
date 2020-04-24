@@ -10,11 +10,10 @@ jest.mock('../../workers/timer-worker', () => ({
     runTimer: async () => {}
   }))
 }))
-
 jest.mock('tone', () => ({
   start: jest.fn(),
   Synth: class Synth {
-    toMaster() {
+    toDestination() {
       return {
         triggerAttackRelease: () => {}
       }
@@ -49,6 +48,7 @@ describe('Timer', () => {
       beforeAll(() => {
         store = new RootStore()
         mocked(TimerWorker).mockClear()
+        store.round.rounds.clear()
         store.timer.startExercise()
       })
       it('does not create a new TimerWorker', () => {

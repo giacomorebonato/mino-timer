@@ -12,7 +12,7 @@ jest.mock('../../workers/timer-worker', () => ({
 jest.mock('tone', () => ({
   start: jest.fn(),
   Synth: class Synth {
-    toMaster() {
+    toDestination() {
       return {
         triggerAttackRelease: () => {}
       }

@@ -4,7 +4,7 @@ import { RootStore } from '../store'
 const storeContext = React.createContext<RootStore | null>(null)
 
 export const StoreProvider: React.FC = ({ children }) => {
-  const [rootStore] = React.useState(() => new RootStore())
+  const rootStore = new RootStore()
 
   return (
     <storeContext.Provider value={rootStore}>{children}</storeContext.Provider>

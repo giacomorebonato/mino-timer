@@ -41,7 +41,6 @@ export const Home: React.FC = () => {
         ))}
       </Box>
       <TimerActions />
-      <Box></Box>
     </Stack>
   ))
 }
