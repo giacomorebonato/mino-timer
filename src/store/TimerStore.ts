@@ -11,6 +11,7 @@ export class TimerStore extends BaseStore {
   idle = false
   synth = new Tone.Synth().toDestination()
   timerWorker?: TimerWorker
+  StoreTimerWorker = getTimerWorker()
 
   @action
   clearPerformance() {
@@ -129,9 +130,7 @@ export class TimerStore extends BaseStore {
       current.exercise = firstRound.exercises[0]
     }
 
-    const StoreTimerWorker = getTimerWorker()
-
-    this.timerWorker = await new StoreTimerWorker()
+    this.timerWorker = await new this.StoreTimerWorker()
 
     this.log('Starting')
     this.log(`Round: ${current.round.id}`)
@@ -160,7 +159,9 @@ export class TimerStore extends BaseStore {
     }
 
     await this.timerWorker.runTimer(
-      current.exercise.exerciseTime,
+      current.isRecovery
+        ? current.exercise.recoveryTime
+        : current.exercise.exerciseTime,
       proxy((secondsLeft: number) => updateSeconds(secondsLeft))
     )
   }
