@@ -1,30 +1,6 @@
 import { Select } from '@chakra-ui/core'
 import React from 'react'
-
-const exercises = [
-  'Crunches',
-  'Jumping Jacks',
-  'Jumping Jacks to the Step',
-  'Burpees',
-  'Froggy Jumps',
-  'Front Kick Lunge',
-  'Jogging in Place',
-  'Jogging with High Knees',
-  'Long Jumps',
-  'Lunges',
-  'Mountain Climbers',
-  'Plank',
-  'Plyo Lunges',
-  'Plyo Jacks',
-  'Prisoner Squat Jumps',
-  'Push ups',
-  'Reverse Crunches',
-  'Russian twists',
-  'Side to Side Jumping Lunges',
-  'Squat Jumps',
-  'Squats',
-  'Toe Taps with Jumps'
-]
+import exercises from './exercises.json'
 
 export const ExerciseSelect: React.FC<React.SelectHTMLAttributes<
   HTMLSelectElement
@@ -35,8 +11,8 @@ export const ExerciseSelect: React.FC<React.SelectHTMLAttributes<
     onChange={onChange}
     value={value}
   >
-    {exercises.map((exercise) => (
-      <option key={exercise}>{exercise}</option>
+    {exercises.exercises.map(({ id, name }) => (
+      <option key={`exercise-${id}`}>{name}</option>
     ))}
   </Select>
 )

@@ -22,23 +22,37 @@ jest.mock('tone', () => ({
 }))
 
 describe('Timer', () => {
-  describe('startTimer()', () => {
+  describe('startExercise()', () => {
     let store: RootStore
     beforeAll(() => {
       store = new RootStore()
     })
-    describe('when no exercises are created', () => {
-      it("doesn't set idle to false", () => {
+    beforeEach(async () => {
+      await store.timer.stopPerformance()
+    })
+    describe('when no exercise is created', () => {
+      it("doesn't set idle to true", async () => {
         store.timer.clearPerformance()
         store.timer.startExercise()
+
         expect(store.timer.idle).toBe(false)
       })
     })
     describe('when exercises are created', () => {
-      it('sets idle to true', () => {
+      it('sets idle to true', async () => {
         store.round.addExercise()
         store.timer.startExercise()
         expect(store.timer.idle).toBe(true)
+      })
+    })
+    describe('when there is a round with no exercises', () => {
+      it('sets idle to false', async () => {
+        store.timer.clearPerformance()
+        store.round.addExercise()
+        store.round.rounds.get(1)!.exercises = []
+        store.timer.startExercise()
+
+        expect(store.timer.idle).toBe(false)
       })
     })
   })
@@ -50,6 +64,9 @@ describe('Timer', () => {
         mocked(TimerWorker).mockClear()
         store.round.rounds.clear()
         store.timer.startExercise()
+      })
+      afterAll(async () => {
+        await store.timer.stopPerformance()
       })
       it('does not create a new TimerWorker', () => {
         expect(TimerWorker).toHaveBeenCalledTimes(0)
@@ -68,6 +85,9 @@ describe('Timer', () => {
         mocked(TimerWorker).mockClear()
         store.timer.startExercise()
       })
+      afterAll(async () => {
+        await store.timer.stopPerformance()
+      })
       it('creates a new TimerWorker', () => {
         expect(TimerWorker).toHaveBeenCalledTimes(1)
       })
@@ -79,14 +99,14 @@ describe('Timer', () => {
       })
     })
   })
-  describe('stopTimers()', () => {
+  describe('stopPerformance()', () => {
     let store: RootStore
-    beforeAll(() => {
+    beforeAll(async () => {
       store = new RootStore()
       store.timer.startExercise()
-      store.timer.stopPerformance()
     })
-    it('sets idle to false', () => {
+    it('sets idle to false', async () => {
+      await store.timer.stopPerformance()
       expect(store.timer.idle).toBe(false)
     })
   })

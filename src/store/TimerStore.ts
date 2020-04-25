@@ -15,7 +15,7 @@ export class TimerStore extends BaseStore {
 
   @action
   clearPerformance() {
-    this.root.round.rounds = new Map()
+    this.root.round.rounds.clear()
     this.root.round.current.clear()
   }
 
@@ -37,11 +37,15 @@ export class TimerStore extends BaseStore {
     }
   }
 
-  @action
-  updateSeconds(exercise: ExerciseData, isRecovery: boolean) {
+  private createTimeUpdater(exercise: ExerciseData, isRecovery: boolean) {
     return proxy((secondsLeft: number) => {
       this.log(`Seconds left ${secondsLeft}`)
       this.log(`Recovery: ${isRecovery}`)
+
+      if (!this.idle) {
+        this.timerWorker!.clearInterval()
+        return
+      }
 
       exercise[isRecovery ? 'recoverySecondsLeft' : 'secondsLeft'] = secondsLeft
 
@@ -100,11 +104,15 @@ export class TimerStore extends BaseStore {
     this.startExercise()
   }
 
-  async playSoundsBeforeStart() {
+  private async playSoundsBeforeStart() {
     return new Promise(async (resolve) => {
       await this.timerWorker!.runTimer(
         5,
         proxy((beginningSeconds: number) => {
+          if (!this.idle) {
+            this.timerWorker!.clearInterval()
+            resolve()
+          }
           if (beginningSeconds > 1) {
             this.synth!.triggerAttackRelease('C4', '0.2')
           } else if (beginningSeconds === 1) {
@@ -118,39 +126,58 @@ export class TimerStore extends BaseStore {
   }
 
   @action
-  async startExercise() {
+  private checkCurrentRound() {
     const { current, rounds } = this.root.round
 
-    if (!rounds.size) return
-    this.idle = true
-
     if (!current.round) {
-      const firstRound = rounds.get(1)!
-      current.round = firstRound
-      current.exercise = firstRound.exercises[0]
+      if (!current.round && rounds.has(1)) {
+        current.round = rounds.get(1)!
+      }
+
+      if (!current.round) {
+        this.log('There is no created round')
+        return false
+      }
     }
 
+    if (!current.exercise) {
+      if (!current.round.exercises.length) {
+        this.log("You can't have a round without exercises")
+        return false
+      }
+
+      current.exercise = current.round.exercises[0]
+    }
+
+    return true
+  }
+
+  @action
+  async startExercise() {
+    const { current } = this.root.round
+
+    if (!this.checkCurrentRound()) return
+
+    this.idle = true
+    const currentExercise = current.exercise!
+    const currentRound = current.round!
     this.timerWorker = await new this.StoreTimerWorker()
 
     this.log('Starting')
-    this.log(`Round: ${current.round.id}`)
-    this.log(`Exercise: ${current.exercise!.name}`)
+    this.log(`Round: ${currentRound.id}`)
+    this.log(`Exercise: ${currentExercise.name}`)
 
-    if (!current.round) {
-      throw Error('Undefined current round.')
-    }
-    if (!current.exercise) {
-      throw Error('Undefined current exercise.')
-    }
+    const time =
+      currentExercise[current.isRecovery ? 'recoveryTime' : 'exerciseTime']
 
     await speak(
       current.isRecovery
-        ? `Rest for ${current.exercise.recoverySecondsLeft} seconds.`
-        : `Get ready for ${current.exercise.secondsLeft} seconds of ${current.exercise.name}.`
+        ? `Rest for ${time} seconds.`
+        : `Get ready for ${time} seconds of ${currentExercise.name}.`
     )
 
-    const updateSeconds = this.updateSeconds(
-      current.exercise,
+    const updateSeconds = this.createTimeUpdater(
+      currentExercise,
       current.isRecovery
     )
 
@@ -158,11 +185,6 @@ export class TimerStore extends BaseStore {
       await this.playSoundsBeforeStart()
     }
 
-    await this.timerWorker.runTimer(
-      current.isRecovery
-        ? current.exercise.recoveryTime
-        : current.exercise.exerciseTime,
-      proxy((secondsLeft: number) => updateSeconds(secondsLeft))
-    )
+    await this.timerWorker.runTimer(time, proxy(updateSeconds))
   }
 }

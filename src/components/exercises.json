@@ -1,0 +1,119 @@
+{
+  "exercises": [
+    {
+      "id": 1,
+      "name": "Crunches",
+      "url": ""
+    },
+    {
+      "id": 2,
+      "name": "Crunches",
+      "url": ""
+    },
+    {
+      "id": 3,
+      "name": "Jumping Jacks",
+      "url": ""
+    },
+    {
+      "id": 4,
+      "name": "Jumping Jacks to the Step",
+      "url": ""
+    },
+    {
+      "id": 5,
+      "name": "Burpees",
+      "url": ""
+    },
+    {
+      "name": "Froggy Jumps",
+      "id": 6,
+      "url": ""
+    },
+    {
+      "name": "Front Kick Lunge",
+      "id": 7,
+      "url": ""
+    },
+    {
+      "name": "Jogging in Place",
+      "id": 8,
+      "url": ""
+    },
+    {
+      "name": "Jogging with High Knees",
+      "id": 9,
+      "url": ""
+    },
+    {
+      "name": "Long Jumps",
+      "id": 10,
+      "url": ""
+    },
+    {
+      "name": "Lunges",
+      "id": 11,
+      "url": ""
+    },
+    {
+      "name": "Mountain Climbers",
+      "id": 12,
+      "url": ""
+    },
+    {
+      "name": "Plank",
+      "id": 13,
+      "url": ""
+    },
+    {
+      "name": "Plyo Lunges",
+      "id": 14,
+      "url": ""
+    },
+    {
+      "name": "Plyo Jacks",
+      "id": 15,
+      "url": ""
+    },
+    {
+      "name": "Prisoner Squat Jumps",
+      "id": 16,
+      "url": ""
+    },
+    {
+      "name": "Push ups",
+      "id": 17,
+      "url": ""
+    },
+    {
+      "name": "Reverse Crunches",
+      "id": 18,
+      "url": ""
+    },
+    {
+      "name": "Russian twists",
+      "id": 19,
+      "url": ""
+    },
+    {
+      "name": "Side to Side Jumping Lunges",
+      "id": 20,
+      "url": ""
+    },
+    {
+      "name": "Squat Jumps",
+      "id": 21,
+      "url": ""
+    },
+    {
+      "name": "Squats",
+      "id": 22,
+      "url": ""
+    },
+    {
+      "name": "Toe Taps with Jumps",
+      "id": 23,
+      "url": ""
+    }
+  ]
+}

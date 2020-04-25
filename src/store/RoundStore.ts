@@ -5,6 +5,9 @@ import type { RootStore } from './index'
 
 export class RoundStore extends BaseStore {
   @observable
+  counter = 0
+
+  @observable
   rounds = new Map<Number, RoundData>()
 
   @observable
@@ -21,6 +24,15 @@ export class RoundStore extends BaseStore {
 
   @computed
   get workoutLink() {
+    const obj = Object.create({})
+    this.rounds.forEach((round) => {
+      if (!obj.hasOwnProperty(round.id.toString())) {
+        obj[round.id] = {
+          exercises: []
+        }
+      }
+    })
+
     const base64 = btoa(JSON.stringify(this.rounds))
     return `http://mino-timer.now.sh/workout/${base64}`
   }
@@ -47,23 +59,24 @@ export class RoundStore extends BaseStore {
 
     this.updateCache()
     const addedId = newExercise.id
+    this.counter++
 
     this.root.exercise.newExercise = {
       ...newExercise,
-      id: newExercise.id + 1
+      uid: this.counter
     }
 
     return addedId
   }
 
   @action
-  moveExercise(roundId: number, exerciseId: number, direction: 'UP' | 'DOWN') {
+  moveExercise(roundId: number, exerciseUid: number, direction: 'UP' | 'DOWN') {
     this.log('moveExercise')
     const round = this.rounds.get(roundId)
 
     if (!round) return
 
-    const index = round.exercises.findIndex((item) => item.id === exerciseId)
+    const index = round.exercises.findIndex((item) => item.uid === exerciseUid)
 
     if (
       (index === 0 && direction === 'UP') ||
@@ -84,11 +97,11 @@ export class RoundStore extends BaseStore {
   }
 
   @action
-  removeExercise(roundId: number, exerciseId: number) {
+  removeExercise(roundId: number, exerciseUid: number) {
     const round = this.rounds.get(roundId)
 
     if (!round) return
-    round.exercises = round.exercises.filter((e) => e.id !== exerciseId)
+    round.exercises = round.exercises.filter((e) => e.uid !== exerciseUid)
 
     if (!round.exercises.length) {
       this.rounds.delete(round.id)
@@ -124,7 +137,7 @@ export class RoundStore extends BaseStore {
         this.rounds.set(parseInt(key), round)
         exerciseId += round.exercises.reduce(
           (acc: number, value: ExerciseData) =>
-            value.id > acc ? value.id + 1 : acc,
+            value.uid > acc ? value.uid + 1 : acc,
           exerciseId
         )
       })
