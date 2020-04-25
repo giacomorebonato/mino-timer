@@ -69,11 +69,8 @@ export class TimerStore extends BaseStore {
     this.log('nextExercise')
     const { current, rounds } = this.root.round
 
-    if (!current.round) {
-      throw Error('Undefined current round.')
-    }
-    if (!current.exercise) {
-      throw Error('Undefined current exercise.')
+    if (!current.round || !current.exercise) {
+      return
     }
 
     if (current.isRecovery) {
