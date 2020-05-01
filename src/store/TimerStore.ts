@@ -11,9 +11,9 @@ export class TimerStore extends BaseStore {
   idle = false
   synth = new Tone.Synth().toDestination()
   StoreTimerWorker = getTimerWorker()
-  timerWorker!: TimerWorker
+  timerWorker?: TimerWorker
 
-  private async initWorker() {
+  async initWorker() {
     if (!this.timerWorker) {
       this.timerWorker = await new this.StoreTimerWorker()
     }
@@ -27,6 +27,8 @@ export class TimerStore extends BaseStore {
 
   @action
   async stopPerformance() {
+    if (!this.timerWorker) return
+
     this.idle = false
     const currentRound = this.root.round.current
 
@@ -42,7 +44,7 @@ export class TimerStore extends BaseStore {
       this.log(`Seconds left ${secondsLeft}`)
       this.log(`Recovery: ${isRecovery}`)
 
-      if (!this.idle) {
+      if (this.timerWorker && !this.idle) {
         this.timerWorker.clearInterval()
         return
       }
@@ -103,10 +105,14 @@ export class TimerStore extends BaseStore {
 
   private async playSoundsBeforeStart() {
     return new Promise(async (resolve) => {
+      if (!this.timerWorker) {
+        throw new Error('You cannot play sound with no worker')
+      }
+
       await this.timerWorker.runTimer(
         5,
         proxy((beginningSeconds: number) => {
-          if (!this.idle) {
+          if (this.timerWorker && !this.idle) {
             this.timerWorker.clearInterval()
             resolve()
           }
@@ -151,8 +157,6 @@ export class TimerStore extends BaseStore {
 
   @action
   async startExercise() {
-    await this.initWorker()
-
     const { current } = this.root.round
 
     if (!this.checkCurrentRound()) return
@@ -182,6 +186,10 @@ export class TimerStore extends BaseStore {
       currentExercise,
       current.isRecovery
     )
+
+    if (!this.timerWorker) {
+      throw new Error('You cannot start timer with no worker')
+    }
 
     await this.timerWorker.runTimer(time, proxy(updateSeconds))
   }
