@@ -11,17 +11,23 @@ export class TimerWorker {
     }
     this.intervalId = undefined
   }
-  runTimer(seconds: number, onSecondsUpdate: TimerCallback) {
+  runTimer(seconds: number, onSecondsUpdate: TimerCallback): Promise<string> {
     log('runTimer start')
 
-    this.intervalId = setInterval(async () => {
-      seconds--
+    return new Promise((resolve) => {
+      this.intervalId = setInterval(
+        async () => {
+          seconds--
 
-      if (seconds === 0) {
-        this.clearInterval()
-      }
+          if (seconds === 0) {
+            this.clearInterval()
+            resolve('Timer completed!')
+          }
 
-      await onSecondsUpdate(seconds)
-    }, 1000)
+          await onSecondsUpdate(seconds)
+        },
+        process.env.NODE_ENV === 'test' ? 0 : 1000
+      )
+    })
   }
 }

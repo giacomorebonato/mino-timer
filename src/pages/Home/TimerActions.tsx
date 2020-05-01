@@ -16,7 +16,7 @@ export const TimerActions = () => {
           <StartExerciseButton
             isDisabled={timer.idle}
             onClick={() => {
-              timer.startExercise()
+              timer.startPerformance()
             }}
           />
 

@@ -10,17 +10,17 @@ export class RoundStore extends BaseStore {
   @observable
   rounds = new Map<Number, RoundData>()
 
-  @observable
-  current = {
-    clear() {
-      this.round = null
-      this.isRecovery = false
-      this.exercise = null
-    },
-    exercise: null,
-    round: null,
-    isRecovery: false
-  } as CurrentRound
+  // @observable
+  // current = {
+  //   clear() {
+  //     this.round = null
+  //     this.isRecovery = false
+  //     this.exercise = null
+  //   },
+  //   exercise: null,
+  //   round: null,
+  //   isRecovery: false
+  // } as CurrentRound
 
   @computed
   get workoutLink() {
@@ -84,8 +84,6 @@ export class RoundStore extends BaseStore {
     ) {
       return
     }
-
-    this.current.clear()
 
     this.log('Mutating array')
 
