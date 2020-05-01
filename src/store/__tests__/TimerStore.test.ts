@@ -7,6 +7,7 @@ jest.mock('../../workers/getTimerWorker', () => ({
 }))
 jest.mock('../../workers/timer-worker', () => ({
   TimerWorker: jest.fn(() => ({
+    clearInterval: async () => {},
     runTimer: async () => {}
   }))
 }))
@@ -88,8 +89,8 @@ describe('Timer', () => {
       afterAll(async () => {
         await store.timer.stopPerformance()
       })
-      it('creates a new TimerWorker', () => {
-        expect(TimerWorker).toHaveBeenCalledTimes(1)
+      it('does not create a new TimerWorker', () => {
+        expect(TimerWorker).not.toHaveBeenCalled()
       })
       it('sets the current round', () => {
         expect(store.round.current).not.toBeNull()

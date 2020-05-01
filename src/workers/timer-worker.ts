@@ -4,9 +4,12 @@ const log = debug('time-worker')
 type TimerCallback = (secondsLeft: number) => void
 
 export class TimerWorker {
-  intervalId = (null as unknown) as NodeJS.Timeout
+  intervalId?: NodeJS.Timeout
   clearInterval() {
-    clearInterval(this.intervalId)
+    if (this.intervalId) {
+      clearInterval(this.intervalId)
+    }
+    this.intervalId = undefined
   }
   runTimer(seconds: number, onSecondsUpdate: TimerCallback) {
     log('runTimer start')
@@ -15,7 +18,7 @@ export class TimerWorker {
       seconds--
 
       if (seconds === 0) {
-        clearInterval(this.intervalId)
+        this.clearInterval()
       }
 
       await onSecondsUpdate(seconds)

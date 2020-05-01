@@ -3,15 +3,21 @@ import { action, observable } from 'mobx'
 import * as Tone from 'tone'
 import { speak } from '../lib'
 import { getTimerWorker } from '../workers/getTimerWorker'
-import { TimerWorker } from '../workers/timer-worker'
+import type { TimerWorker } from '../workers/timer-worker'
 import { BaseStore } from './BaseStore'
 
 export class TimerStore extends BaseStore {
   @observable
   idle = false
   synth = new Tone.Synth().toDestination()
-  timerWorker?: TimerWorker
   StoreTimerWorker = getTimerWorker()
+  timerWorker!: TimerWorker
+
+  private async initWorker() {
+    if (!this.timerWorker) {
+      this.timerWorker = await new this.StoreTimerWorker()
+    }
+  }
 
   @action
   clearPerformance() {
@@ -28,13 +34,7 @@ export class TimerStore extends BaseStore {
       currentRound.exercise.secondsLeft = currentRound.exercise.exerciseTime
     }
 
-    if (this.timerWorker) {
-      try {
-        await this.timerWorker.clearInterval()
-      } catch (error) {
-        this.log('Proxy is already released.')
-      }
-    }
+    await this.timerWorker.clearInterval()
   }
 
   private createTimeUpdater(exercise: ExerciseData, isRecovery: boolean) {
@@ -43,7 +43,7 @@ export class TimerStore extends BaseStore {
       this.log(`Recovery: ${isRecovery}`)
 
       if (!this.idle) {
-        this.timerWorker!.clearInterval()
+        this.timerWorker.clearInterval()
         return
       }
 
@@ -103,11 +103,11 @@ export class TimerStore extends BaseStore {
 
   private async playSoundsBeforeStart() {
     return new Promise(async (resolve) => {
-      await this.timerWorker!.runTimer(
+      await this.timerWorker.runTimer(
         5,
         proxy((beginningSeconds: number) => {
           if (!this.idle) {
-            this.timerWorker!.clearInterval()
+            this.timerWorker.clearInterval()
             resolve()
           }
           if (beginningSeconds > 1) {
@@ -151,6 +151,8 @@ export class TimerStore extends BaseStore {
 
   @action
   async startExercise() {
+    await this.initWorker()
+
     const { current } = this.root.round
 
     if (!this.checkCurrentRound()) return
@@ -158,7 +160,6 @@ export class TimerStore extends BaseStore {
     this.idle = true
     const currentExercise = current.exercise!
     const currentRound = current.round!
-    this.timerWorker = await new this.StoreTimerWorker()
 
     this.log('Starting')
     this.log(`Round: ${currentRound.id}`)
@@ -173,14 +174,14 @@ export class TimerStore extends BaseStore {
         : `Get ready for ${time} seconds of ${currentExercise.name}.`
     )
 
+    if (!current.isRecovery) {
+      await this.playSoundsBeforeStart()
+    }
+
     const updateSeconds = this.createTimeUpdater(
       currentExercise,
       current.isRecovery
     )
-
-    if (!current.isRecovery) {
-      await this.playSoundsBeforeStart()
-    }
 
     await this.timerWorker.runTimer(time, proxy(updateSeconds))
   }
