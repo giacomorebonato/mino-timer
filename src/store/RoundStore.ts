@@ -5,22 +5,10 @@ import type { RootStore } from './index'
 
 export class RoundStore extends BaseStore {
   @observable
-  counter = 0
+  counter = 1
 
   @observable
   rounds = new Map<Number, RoundData>()
-
-  // @observable
-  // current = {
-  //   clear() {
-  //     this.round = null
-  //     this.isRecovery = false
-  //     this.exercise = null
-  //   },
-  //   exercise: null,
-  //   round: null,
-  //   isRecovery: false
-  // } as CurrentRound
 
   @computed
   get workoutLink() {
@@ -40,6 +28,8 @@ export class RoundStore extends BaseStore {
   @action
   addExercise() {
     const { newExercise } = this.root.exercise
+    newExercise.uid = this.counter
+    this.counter++
 
     if (!this.rounds.has(newExercise.round)) {
       this.log(`Creating round ${newExercise.round}`)
@@ -59,11 +49,9 @@ export class RoundStore extends BaseStore {
 
     this.updateCache()
     const addedId = newExercise.id
-    this.counter++
 
     this.root.exercise.newExercise = {
-      ...newExercise,
-      uid: this.counter
+      ...newExercise
     }
 
     return addedId
@@ -71,7 +59,7 @@ export class RoundStore extends BaseStore {
 
   @action
   moveExercise(roundId: number, exerciseUid: number, direction: 'UP' | 'DOWN') {
-    this.log('moveExercise')
+    this.log(`Round ${roundId} moveExercise ${exerciseUid} ${direction}`)
     const round = this.rounds.get(roundId)
 
     if (!round) return
@@ -84,8 +72,6 @@ export class RoundStore extends BaseStore {
     ) {
       return
     }
-
-    this.log('Mutating array')
 
     arrayMove.mutate(
       round.exercises,

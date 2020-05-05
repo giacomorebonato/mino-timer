@@ -36,7 +36,7 @@ describe('Timer', () => {
     store = new RootStore()
   })
 
-  describe('startExercise()', () => {
+  describe('startPerformance()', () => {
     it('initializes the worker', async () => {
       await store.timer.startPerformance()
 
@@ -46,7 +46,6 @@ describe('Timer', () => {
     describe('spoken messages', () => {
       beforeAll(() => {
         jest.unmock('../../workers/timer-worker')
-        // jest.useFakeTimers()
       })
 
       afterAll(() => {
@@ -63,10 +62,11 @@ describe('Timer', () => {
         await store.timer.startPerformance()
 
         const calls = mocked(speak).mock.calls
+        const { recoveryTime, name, exerciseTime } = store.exercise.newExercise
 
         expect(calls).toEqual([
-          ['Get ready for 30 seconds of Squats.'],
-          ['Rest for 15 seconds.'],
+          [`Get ready for ${exerciseTime} seconds of ${name}.`],
+          [`Rest for ${recoveryTime} seconds.`],
           ['Congratulations! You completed your workout.']
         ])
       })
@@ -134,7 +134,7 @@ describe('Timer', () => {
 
     describe('when there is a round with no exercises', () => {
       it('sets idle to false', async () => {
-        store.timer.clearPerformance()
+        store.round.rounds.clear()
         store.round.addExercise()
         store.round.rounds.get(1)!.exercises = []
         store.timer.startPerformance()

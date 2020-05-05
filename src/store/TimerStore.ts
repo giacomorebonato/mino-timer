@@ -20,11 +20,6 @@ export class TimerStore extends BaseStore {
   }
 
   @action
-  clearPerformance() {
-    this.root.round.rounds.clear()
-  }
-
-  @action
   async stopPerformance() {
     if (!this.timerWorker) return
 
@@ -32,7 +27,7 @@ export class TimerStore extends BaseStore {
     this.idle = false
   }
 
-  timeUpdater(isRecovery?: boolean, exercise?: ExerciseData) {
+  private timeUpdater(isRecovery?: boolean, exercise?: ExerciseData) {
     return proxy((secondsLeft: number) => {
       if (!this.idle) return
 

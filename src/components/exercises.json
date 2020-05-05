@@ -3,67 +3,57 @@
     {
       "id": 1,
       "name": "Crunches",
-      "url": ""
+      "url": "https://www.youtube.com/watch?v=Xyd_fa5zoEU"
     },
     {
+      "name": "Toe Taps with Jumps",
       "id": 2,
-      "name": "Crunches",
       "url": ""
     },
     {
       "id": 3,
       "name": "Jumping Jacks",
-      "url": ""
-    },
-    {
-      "id": 4,
-      "name": "Jumping Jacks to the Step",
-      "url": ""
+      "url": "https://www.youtube.com/watch?v=UpH7rm0cYbM"
     },
     {
       "id": 5,
       "name": "Burpees",
-      "url": ""
+      "url": "https://www.youtube.com/watch?v=qLBImHhCXSw"
     },
     {
       "name": "Froggy Jumps",
       "id": 6,
-      "url": ""
+      "url": "https://www.youtube.com/watch?v=GvTeWVyJKNE"
     },
     {
       "name": "Front Kick Lunge",
       "id": 7,
-      "url": ""
+      "url": "https://www.youtube.com/watch?v=0_bTYQCxgMg"
     },
     {
-      "name": "Jogging in Place",
+      "name": "Jog in Place",
       "id": 8,
-      "url": ""
+      "url": "https://www.youtube.com/watch?v=uymTGsML0HA"
     },
     {
-      "name": "Jogging with High Knees",
+      "name": "Jog with High Knees",
       "id": 9,
-      "url": ""
-    },
-    {
-      "name": "Long Jumps",
-      "id": 10,
-      "url": ""
+      "url": "https://www.youtube.com/watch?v=kiXoajlAQUo"
     },
     {
       "name": "Lunges",
       "id": 11,
-      "url": ""
+      "url": "https://www.youtube.com/watch?v=QE_hU8XX48I"
     },
     {
       "name": "Mountain Climbers",
       "id": 12,
-      "url": ""
+      "url": "https://www.youtube.com/watch?v=cnyTQDSE884"
     },
     {
       "name": "Plank",
       "id": 13,
-      "url": ""
+      "url": "https://www.youtube.com/watch?v=ASdvN_XEl_c"
     },
     {
       "name": "Plyo Lunges",
@@ -109,11 +99,7 @@
       "name": "Squats",
       "id": 22,
       "url": ""
-    },
-    {
-      "name": "Toe Taps with Jumps",
-      "id": 23,
-      "url": ""
     }
+    
   ]
 }

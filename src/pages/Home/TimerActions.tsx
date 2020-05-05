@@ -41,7 +41,7 @@ export const TimerActions = () => {
             leftIcon={MdCancel}
             flex='1'
             type='button'
-            onClick={() => timer.clearPerformance()}
+            onClick={() => round.rounds.clear()}
           >
             Clear
           </Button>
