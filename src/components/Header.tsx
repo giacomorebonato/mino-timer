@@ -1,8 +1,8 @@
-import { Box, Flex, Heading, Link as ChakraLink } from '@chakra-ui/core'
+import { Box, Flex, Heading, Link as ChakraLink } from '@chakra-ui/react'
 import React from 'react'
 import { Link, NavLink } from 'react-router-dom'
 
-declare module '@chakra-ui/core' {
+declare module '@chakra-ui/react' {
   interface ILink {
     as: NavLink
   }

@@ -1,14 +1,14 @@
-import { FormControl, FormLabel, Select } from '@chakra-ui/core'
-import { useObserver } from 'mobx-react-lite'
+import { FormControl, FormLabel, Select } from '@chakra-ui/react'
+import { observer } from 'mobx-react-lite'
 import React from 'react'
 import { useStore } from '../../hooks/useStore'
 
 const rounds: RoundId[] = [1, 2, 3, 4, 5]
 
-export const RoundChoice = () => {
+export const RoundChoice = observer(() => {
   const store = useStore()
 
-  return useObserver(() => (
+  return (
     <FormControl mb='2'>
       <FormLabel htmlFor='destination-round'>Destination round</FormLabel>
       <Select
@@ -27,5 +27,5 @@ export const RoundChoice = () => {
         ))}
       </Select>
     </FormControl>
-  ))
-}
+  )
+})

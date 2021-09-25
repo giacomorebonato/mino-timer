@@ -1,4 +1,4 @@
-import { Select } from '@chakra-ui/core'
+import { Select } from '@chakra-ui/react'
 import React from 'react'
 
 const seconds = [] as number[]

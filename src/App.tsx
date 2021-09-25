@@ -1,17 +1,15 @@
-import { CSSReset, ThemeProvider } from '@chakra-ui/core'
+import { ChakraProvider } from '@chakra-ui/react'
 import React from 'react'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import { Header } from './components/Header'
 import { StoreProvider } from './hooks/useStore'
 import { About, Feedback, Home } from './pages'
-import { customTheme } from './theme'
 
 const App: React.FC = () => {
   return (
-    <StoreProvider>
-      <Router>
-        <ThemeProvider theme={customTheme}>
-          <CSSReset />
+    <ChakraProvider>
+      <StoreProvider>
+        <Router>
           <Header />
           <Switch>
             <Route path='/about'>
@@ -24,9 +22,9 @@ const App: React.FC = () => {
               <Home />
             </Route>
           </Switch>
-        </ThemeProvider>
-      </Router>
-    </StoreProvider>
+        </Router>
+      </StoreProvider>
+    </ChakraProvider>
   )
 }
 

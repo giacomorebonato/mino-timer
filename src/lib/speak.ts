@@ -10,7 +10,7 @@ export const speak = (text: string) => {
     return
   }
 
-  return new Promise((resolve, reject) => {
+  return new Promise<void>((resolve, reject) => {
     const ssu = new SpeechSynthesisUtterance(text)
     const iosTrigger = document.getElementById('ios-speak') as HTMLButtonElement
     ssu.lang = 'en-US'
@@ -26,9 +26,7 @@ export const speak = (text: string) => {
       iosTrigger.addEventListener('click', customSpeak)
       iosTrigger.click()
       iosTrigger.removeEventListener('click', customSpeak)
-      setTimeout(() => {
-        resolve()
-      }, 2000)
+      setTimeout(resolve, 2000)
     } else {
       ssu.onend = () => {
         resolve()

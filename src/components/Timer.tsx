@@ -1,4 +1,4 @@
-import { Box, Button, ButtonGroup, Flex, Text } from '@chakra-ui/core'
+import { Box, Button, ButtonGroup, Flex, Text } from '@chakra-ui/react'
 import React from 'react'
 import { FaAngleDown, FaAngleUp, FaRegTrashAlt } from 'react-icons/fa'
 
@@ -35,12 +35,12 @@ export const Timer: React.FC<TimerProps> = React.memo(
                 onRemove()
               }}
               size='sm'
-              leftIcon={FaRegTrashAlt}
+              leftIcon={<FaRegTrashAlt />}
             >
               Remove
             </Button>
             <Button
-              leftIcon={FaAngleUp}
+              leftIcon={<FaAngleUp />}
               onClick={() => {
                 move('UP')
               }}
@@ -52,7 +52,7 @@ export const Timer: React.FC<TimerProps> = React.memo(
               onClick={() => {
                 move('DOWN')
               }}
-              leftIcon={FaAngleDown}
+              leftIcon={<FaAngleDown />}
               size='sm'
             >
               Move down

@@ -1,5 +1,5 @@
-import { Box, Stack, Text } from '@chakra-ui/core'
-import { useObserver } from 'mobx-react-lite'
+import { Box, Heading, Stack } from '@chakra-ui/react'
+import { observer } from 'mobx-react-lite'
 import React from 'react'
 import { useStore } from '../../hooks/useStore'
 import { AddExerciseButton } from './AddExerciseButton'
@@ -10,15 +10,15 @@ import { RoundBox } from './RoundBox'
 import { RoundChoice } from './RoundChoice'
 import { TimerActions } from './TimerActions'
 
-export const Home: React.FC = () => {
+export const Home: React.FC = observer(() => {
   const { round } = useStore()
 
-  return useObserver(() => (
+  return (
     <Stack as='main' maxWidth='800px' mx='auto' p='4'>
       <Box>
-        <Text as='h2' fontSize='2em'>
+        <Heading as='h2' fontSize='2em'>
           Create your timer
-        </Text>
+        </Heading>
         <form
           onSubmit={(e) => {
             e.preventDefault()
@@ -42,5 +42,5 @@ export const Home: React.FC = () => {
       </Box>
       <TimerActions />
     </Stack>
-  ))
-}
+  )
+})

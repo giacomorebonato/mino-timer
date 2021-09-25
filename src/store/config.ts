@@ -1,0 +1,2 @@
+export const DEFAULT_EXERCISE_TIME = 30
+export const DEFAULT_RECOVERY_TIME = 15

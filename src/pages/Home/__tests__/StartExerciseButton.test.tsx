@@ -1,4 +1,4 @@
-import { ThemeProvider } from '@chakra-ui/core'
+import { ThemeProvider } from '@chakra-ui/react'
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import React from 'react'
 import * as Tone from 'tone'
